@@ -1,21 +1,22 @@
 /* ==========================================================================
-   Artesanatos da Mi — dados da vitrine
+   Artesanatos da Mi Pinho — dados da vitrine
    Estes dados também são usados pelo painel admin (localStorage).
    Para editar produtos sem mexer em código, use o painel /admin/produtos.html
    ========================================================================== */
 
-const STORE_SETTINGS_DEFAULT = {
-  brand: "Artesanatos da Mi",
+let STORE_SETTINGS_DEFAULT = {
+  brand: "Artesanatos da Mi Pinho",
   slogan: "Crochê com carinho em cada detalhe.",
   whatsapp: "5566999999999",
   instagram: "artesanatosdami",
   email: "contato@artesanatosdami.com.br",
   cidade: "Sinop - MT",
   horario: "Seg a sáb, 9h às 18h",
-  whatsappMsgPadrao: "Olá, Mi! Gostaria de saber mais sobre os seus trabalhos de crochê."
+  whatsappMsgPadrao: "Olá, Mi! Gostaria de saber mais sobre os seus trabalhos de crochê.",
+  avisoPedido: "Frete, prazo e forma de pagamento são combinados com a Mi pelo WhatsApp."
 };
 
-const CATEGORIES_DEFAULT = [
+let CATEGORIES_DEFAULT = [
   { id: "bolsas", nome: "Bolsas", icon: "bag" },
   { id: "amigurumis", nome: "Amigurumis", icon: "bear" },
   { id: "chaveiros", nome: "Chaveiros", icon: "key" },
@@ -28,7 +29,7 @@ const CATEGORIES_DEFAULT = [
   { id: "utilidades", nome: "Utilidades", icon: "plate" }
 ];
 
-const PRODUCTS_DEFAULT = [
+let PRODUCTS_DEFAULT = [
   {
     id: "p01", nome: "Bolsa Rosê Trançada", categoria: "bolsas", preco: 189.9,
     status: "pronta", prazo: "Envio em até 2 dias úteis", cores: ["Rosé", "Off-white"],
@@ -91,25 +92,34 @@ const PRODUCTS_DEFAULT = [
   }
 ];
 
-// ---- helpers de acesso (com fallback para localStorage, usado pelo admin) ----
-function getSettings(){
+// ---- dados.json ----
+// Se existir um arquivo dados.json na mesma pasta do site, ele substitui os dados acima.
+// E o arquivo gerado pelo Editor do site. Se nao existir, vale o que esta neste arquivo.
+async function carregarDados(){
+  if(window.__PREVIEW_DATA){ const d = window.__PREVIEW_DATA; STORE_SETTINGS_DEFAULT = d.settings; CATEGORIES_DEFAULT = d.categories; PRODUCTS_DEFAULT = d.products; return; }
   try{
-    const s = localStorage.getItem("adm_settings");
-    return s ? JSON.parse(s) : STORE_SETTINGS_DEFAULT;
-  }catch(e){ return STORE_SETTINGS_DEFAULT; }
+    const r = await fetch("dados.json", {cache:"no-cache"});
+    if(!r.ok) return;
+    const d = await r.json();
+    if(d.settings) STORE_SETTINGS_DEFAULT = d.settings;
+    if(Array.isArray(d.categories)) CATEGORIES_DEFAULT = d.categories;
+    if(Array.isArray(d.products)) PRODUCTS_DEFAULT = d.products;
+  }catch(e){ /* sem dados.json: usa os dados deste arquivo */ }
 }
-function getCategories(){
+
+// ---- helpers de acesso ----
+// O site publico le SEMPRE os dados deste arquivo (data.js).
+// Apenas o painel interno (admin) liga window.USE_LOCAL_DATA para usar dados locais.
+function _local(key, fallback){
+  if(!window.USE_LOCAL_DATA) return fallback;
   try{
-    const c = localStorage.getItem("adm_categories");
-    return c ? JSON.parse(c) : CATEGORIES_DEFAULT;
-  }catch(e){ return CATEGORIES_DEFAULT; }
+    const v = localStorage.getItem(key);
+    return v ? JSON.parse(v) : fallback;
+  }catch(e){ return fallback; }
 }
-function getProducts(){
-  try{
-    const p = localStorage.getItem("adm_products");
-    return p ? JSON.parse(p) : PRODUCTS_DEFAULT;
-  }catch(e){ return PRODUCTS_DEFAULT; }
-}
+function getSettings(){ return _local("adm_settings", STORE_SETTINGS_DEFAULT); }
+function getCategories(){ return _local("adm_categories", CATEGORIES_DEFAULT); }
+function getProducts(){ return _local("adm_products", PRODUCTS_DEFAULT); }
 function waLink(number, message){
   return `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
 }

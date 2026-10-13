@@ -5,6 +5,7 @@
    dá pra evoluir para Firebase depois (ver README).
    ========================================================================== */
 
+window.USE_LOCAL_DATA = true; // painel interno usa dados locais
 const ADMIN_PASSWORD_KEY = "adm_password";
 const ADMIN_SESSION_KEY = "adm_session";
 

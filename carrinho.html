@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carrinho · Artesanatos da Mi Pinho</title>
+<meta name="description" content="Confira o catálogo completo de peças em crochê da Artesanatos da Mi Pinho: bolsas, amigurumis, decoração e muito mais.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22><text y=%2236%22 font-size=%2236%22>🧶</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="page-cart">
+
+<header class="site-header">
+  <div class="inner">
+    <a href="index.html" class="brand"><svg class="brand-ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="24" cy="24" r="16"/><path d="M9 20c10 6 20 2 30 4M9 28c10 4 20 2 30-2M18 9c3 10 2 20-1 30M30 9c-3 10-2 20 1 30"/></svg><span class="brand-name"><span data-brand-name>Artesanatos da Mi Pinho</span><small>CROCHÊ FEITO À MÃO</small></span></a>
+    <nav class="main-nav" id="menu" aria-label="Menu principal">
+      <a href="index.html">Início</a>
+      <a href="catalogo.html">Catálogo</a>
+      <a href="encomenda.html">Encomendas</a>
+      <a href="sobre.html">Sobre a Mi</a>
+      <a href="contato.html">Contato</a>
+    </nav>
+    <div class="head-actions">
+      <a target="_blank" rel="noopener" data-wa-generic href="#" class="btn btn-primary btn-sm head-wa">WhatsApp</a>
+      <a href="carrinho.html" class="cart-link" aria-label="Abrir carrinho"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span class="cart-count" data-cart-count hidden>0</span></a>
+      <button class="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow-hand">quase lá</span>
+      <h1 style="font-size:clamp(2.2rem,4vw,3rem)">Seu carrinho</h1>
+      <p>Revise as peças e envie o pedido pelo WhatsApp. A Mi confirma tudo com você.</p>
+    </div>
+    <div class="cart-layout" data-cart-root></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="footer-word">artesanatos da mi pinho</div>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="brand">🧶 Artesanatos da Mi Pinho</div>
+        <p style="margin-top:10px;max-width:32ch;" data-brand-slogan></p>
+      </div>
+      <div>
+        <h5>Navegação</h5>
+        <a href="index.html">Início</a>
+        <a href="catalogo.html">Catálogo</a>
+        <a href="carrinho.html">Carrinho</a>
+        <a href="encomenda.html">Encomendas</a>
+        <a href="sobre.html">Sobre a Mi</a>
+      </div>
+      <div>
+        <h5>Atendimento</h5>
+        <a target="_blank" rel="noopener" data-wa-generic href="#">WhatsApp</a>
+        <a target="_blank" rel="noopener" data-insta-link href="#">Instagram</a>
+        <a href="contato.html">Fale conosco</a>
+      </div>
+      <div>
+        <h5>Contato</h5>
+        <p data-store-cidade></p>
+        <p data-store-horario></p>
+        <p data-store-email></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Artesanatos da Mi Pinho — todos os direitos reservados</span>
+      <span>feito com 🤍 e muitos pontos de crochê</span>
+    </div>
+  </div>
+</footer>
+
+<a class="wa-float" target="_blank" rel="noopener" data-wa-float href="#" aria-label="Falar no WhatsApp"></a>
+
+<script src="js/data.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/main.js"></script>
+<script>document.querySelector('.wa-float').innerHTML = ICONS.whats;</script>
+</body>
+</html>

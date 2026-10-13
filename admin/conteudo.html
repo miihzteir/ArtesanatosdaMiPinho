@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Conteúdo — Painel Artesanatos da Mi</title>
+<title>Conteúdo — Painel Artesanatos da Mi Pinho</title>
 <link rel="stylesheet" href="admin.css">
 </head>
 <body>
@@ -66,9 +66,9 @@
     const wa = `wa.me/${settings.whatsapp}`;
     let txt = "";
     if(tipo==="legenda"){
-      txt = `✨ ${p.nome} ✨\n\nFeita à mão, com todo o carinho da Artesanatos da Mi. ${p.desc}\n\n💰 ${money(p.preco)}\n📦 ${p.status==='pronta'?'Pronta entrega':'Sob encomenda — '+p.prazo}\n\nEncomende pelo WhatsApp: ${wa} 🧶`;
+      txt = `✨ ${p.nome} ✨\n\nFeita à mão, com todo o carinho da Artesanatos da Mi Pinho. ${p.desc}\n\n💰 ${money(p.preco)}\n📦 ${p.status==='pronta'?'Pronta entrega':'Sob encomenda — '+p.prazo}\n\nEncomende pelo WhatsApp: ${wa} 🧶`;
     }else if(tipo==="lancamento"){
-      txt = `🌸 NOVIDADE NA ARTESANATOS DA MI 🌸\n\nChegou a ${p.nome}! Peça exclusiva, feita ponto a ponto especialmente para você.\n\n💰 ${money(p.preco)}\nManda mensagem e garante a sua: ${wa}`;
+      txt = `🌸 NOVIDADE NA ARTESANATOS DA MI PINHO 🌸\n\nChegou a ${p.nome}! Peça exclusiva, feita ponto a ponto especialmente para você.\n\n💰 ${money(p.preco)}\nManda mensagem e garante a sua: ${wa}`;
     }else if(tipo==="pronta"){
       txt = `📦 Pronta entrega!\n\n${p.nome} já está pronta e esperando por você. Sem espera, sem fila — é só chamar no WhatsApp e combinar a entrega.\n\n${wa}`;
     }else if(tipo==="encomenda"){

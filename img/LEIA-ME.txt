@@ -1,0 +1,2 @@
+Coloque aqui as fotos dos produtos.
+O Editor gera um zip com a pasta img pronta: basta subir as fotos para esta pasta no GitHub.
