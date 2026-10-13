@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catálogo — Artesanatos da Mi</title>
+<meta name="description" content="Confira o catálogo completo de peças em crochê da Artesanatos da Mi: bolsas, amigurumis, decoração e muito mais.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22><text y=%2236%22 font-size=%2236%22>🧶</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="inner">
+    <a href="index.html" class="brand">🧶 <span>Artesanatos <em style="font-style:italic">da Mi</em><small>CROCHÊ FEITO À MÃO</small></span></a>
+    <nav class="main-nav">
+      <a href="index.html">Início</a>
+      <a href="catalogo.html" class="active">Catálogo</a>
+      <a href="encomenda.html">Encomendas</a>
+      <a href="sobre.html">Sobre a Mi</a>
+      <a href="contato.html">Contato</a>
+    </nav>
+    <div style="display:flex;gap:12px;align-items:center;">
+      <a href="encomenda.html" class="btn btn-outline btn-sm">Encomenda personalizada</a>
+      <a target="_blank" rel="noopener" data-wa-generic href="#" class="btn btn-primary btn-sm">WhatsApp</a>
+      <button class="menu-toggle" aria-label="Abrir menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<section style="padding-bottom:0;">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow-hand">todas as peças</span>
+      <h1 style="font-size:clamp(2.2rem,4vw,3rem)">Catálogo</h1>
+      <p>Filtre por categoria e encontre a peça perfeita para você.</p>
+    </div>
+    <div class="filters" data-filters></div>
+  </div>
+</section>
+
+<section style="padding-top:0;">
+  <div class="container">
+    <div class="product-grid" data-catalog-grid></div>
+  </div>
+</section>
+
+<section class="alt-bg">
+  <div class="container" style="text-align:center;">
+    <h2>Não achou o que procurava?</h2>
+    <p style="max-width:50ch;margin:0 auto 24px;">A Mi também faz peças sob encomenda, do seu jeito.</p>
+    <a href="encomenda.html" class="btn btn-primary">Fazer encomenda personalizada</a>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="footer-word">artesanatos da mi</div>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="brand">🧶 Artesanatos da Mi</div>
+        <p style="margin-top:10px;max-width:32ch;" data-brand-slogan></p>
+      </div>
+      <div>
+        <h5>Navegação</h5>
+        <a href="index.html">Início</a>
+        <a href="catalogo.html">Catálogo</a>
+        <a href="encomenda.html">Encomendas</a>
+        <a href="sobre.html">Sobre a Mi</a>
+      </div>
+      <div>
+        <h5>Atendimento</h5>
+        <a target="_blank" rel="noopener" data-wa-generic href="#">WhatsApp</a>
+        <a target="_blank" rel="noopener" data-insta-link href="#">Instagram</a>
+        <a href="contato.html">Fale conosco</a>
+      </div>
+      <div>
+        <h5>Contato</h5>
+        <p data-store-cidade></p>
+        <p data-store-horario></p>
+        <p data-store-email></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Artesanatos da Mi — todos os direitos reservados</span>
+      <span>feito com 🤍 e muitos pontos de crochê</span>
+    </div>
+  </div>
+</footer>
+
+<a class="wa-float" target="_blank" rel="noopener" data-wa-float href="#" aria-label="Falar no WhatsApp"></a>
+
+<script src="js/data.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/main.js"></script>
+<script>document.querySelector('.wa-float').innerHTML = ICONS.whats;</script>
+</body>
+</html>

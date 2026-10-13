@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Encomendas — Painel Artesanatos da Mi</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <nav class="sidebar" data-sidebar></nav>
+  <main class="main">
+    <div class="topbar">
+      <div><h1>Encomendas</h1><p>Acompanhe cada pedido do início ao fim.</p></div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-ghost" id="viewToggle">Ver em lista</button>
+        <button class="btn" onclick="openModal()">+ Nova encomenda</button>
+      </div>
+    </div>
+
+    <div class="panel" id="kanbanView">
+      <div class="kanban" id="kanban"></div>
+    </div>
+
+    <div class="panel" id="listView" style="display:none;">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Cliente</th><th>Peça</th><th>Valor</th><th>Restante</th><th>Prazo</th><th>Status</th><th></th></tr></thead>
+          <tbody id="tbl"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="modal-overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-head"><h3 id="modalTitle">Nova encomenda</h3><button onclick="closeModal()">✕</button></div>
+    <form id="form">
+      <input type="hidden" id="f_id">
+      <div class="grid-2">
+        <div class="field"><label>Nome do cliente</label><input id="f_cliente" required></div>
+        <div class="field"><label>WhatsApp</label><input id="f_whatsapp" required></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>Produto / peça</label><input id="f_produto" required></div>
+        <div class="field"><label>Quantidade</label><input id="f_qtd" type="number" min="1" value="1"></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>Cor</label><input id="f_cor"></div>
+        <div class="field"><label>Tamanho</label><input id="f_tamanho"></div>
+      </div>
+      <div class="field"><label>Personalização</label><input id="f_person"></div>
+      <div class="grid-2">
+        <div class="field"><label>Valor total (R$)</label><input id="f_valor" type="number" step="0.01" value="0"></div>
+        <div class="field"><label>Sinal / entrada (R$)</label><input id="f_sinal" type="number" step="0.01" value="0"></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>Data do pedido</label><input id="f_data" type="date"></div>
+        <div class="field"><label>Prazo de entrega</label><input id="f_prazo" type="date"></div>
+      </div>
+      <div class="field"><label>Status</label><select id="f_status"></select></div>
+      <div class="field"><label>Observações</label><textarea id="f_obs"></textarea></div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn" type="submit">Salvar</button>
+        <button class="btn btn-ghost" type="button" onclick="closeModal()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="../js/data.js"></script>
+<script src="admin-core.js"></script>
+<script>
+  ensureSeed(); checkAuth(); renderSidebar("encomendas");
+  document.getElementById("f_status").innerHTML = ORDER_STATUSES.map(s=>`<option>${s}</option>`).join("");
+
+  function renderAll(){
+    const orders = load("adm_orders");
+    // kanban
+    document.getElementById("kanban").innerHTML = ORDER_STATUSES.map(st=>`
+      <div class="kanban-col">
+        <h4>${st} (${orders.filter(o=>o.status===st).length})</h4>
+        ${orders.filter(o=>o.status===st).map(o=>`
+          <div class="kanban-card" onclick="editItem('${o.id}')" style="cursor:pointer;">
+            <b>${o.cliente}</b>${o.produto}<br><span style="color:var(--brown-soft)">${money(o.valor)} · ${o.prazoEntrega||'sem prazo'}</span>
+          </div>
+        `).join("") || `<p style="font-size:.8rem;color:var(--brown-soft);">—</p>`}
+      </div>
+    `).join("");
+    // lista
+    document.getElementById("tbl").innerHTML = orders.map(o=>`
+      <tr>
+        <td><b>${o.cliente}</b><br><span style="color:var(--brown-soft);font-size:.8rem;">${o.whatsapp||''}</span></td>
+        <td>${o.produto}</td>
+        <td>${money(o.valor)}</td>
+        <td>${money(o.restante)}</td>
+        <td>${o.prazoEntrega||'—'}</td>
+        <td><span class="badge ${statusClass(o.status)}">${o.status}</span></td>
+        <td>
+          <button class="icon-btn" onclick="editItem('${o.id}')">✏️</button>
+          <button class="icon-btn" onclick="delItem('${o.id}')">🗑️</button>
+        </td>
+      </tr>
+    `).join("") || `<tr><td colspan="7" class="empty">Nenhuma encomenda ainda</td></tr>`;
+  }
+  renderAll();
+
+  document.getElementById("viewToggle").addEventListener("click", (e)=>{
+    const kanban = document.getElementById("kanbanView");
+    const list = document.getElementById("listView");
+    const showingKanban = kanban.style.display !== "none";
+    kanban.style.display = showingKanban ? "none" : "block";
+    list.style.display = showingKanban ? "block" : "none";
+    e.target.textContent = showingKanban ? "Ver em kanban" : "Ver em lista";
+  });
+
+  function openModal(){
+    document.getElementById("modalTitle").textContent = "Nova encomenda";
+    document.getElementById("form").reset();
+    document.getElementById("f_id").value = "";
+    document.getElementById("overlay").classList.add("open");
+  }
+  function closeModal(){ document.getElementById("overlay").classList.remove("open"); }
+
+  function editItem(id){
+    const o = load("adm_orders").find(x=>x.id===id);
+    if(!o) return;
+    document.getElementById("modalTitle").textContent = "Editar encomenda";
+    document.getElementById("f_id").value = o.id;
+    document.getElementById("f_cliente").value = o.cliente;
+    document.getElementById("f_whatsapp").value = o.whatsapp;
+    document.getElementById("f_produto").value = o.produto;
+    document.getElementById("f_qtd").value = o.quantidade||1;
+    document.getElementById("f_cor").value = o.cor||"";
+    document.getElementById("f_tamanho").value = o.tamanho||"";
+    document.getElementById("f_person").value = o.personalizacao||"";
+    document.getElementById("f_valor").value = o.valor||0;
+    document.getElementById("f_sinal").value = o.sinal||0;
+    document.getElementById("f_data").value = o.dataPedido||"";
+    document.getElementById("f_prazo").value = o.prazoEntrega||"";
+    document.getElementById("f_status").value = o.status;
+    document.getElementById("f_obs").value = o.observacoes||"";
+    document.getElementById("overlay").classList.add("open");
+  }
+  function delItem(id){
+    if(!confirm("Excluir esta encomenda?")) return;
+    store("adm_orders", load("adm_orders").filter(o=>o.id!==id));
+    renderAll();
+  }
+
+  document.getElementById("form").addEventListener("submit", (e)=>{
+    e.preventDefault();
+    const orders = load("adm_orders");
+    const id = document.getElementById("f_id").value || uid("enc");
+    const valor = parseFloat(document.getElementById("f_valor").value)||0;
+    const sinal = parseFloat(document.getElementById("f_sinal").value)||0;
+    const item = {
+      id, cliente:document.getElementById("f_cliente").value, whatsapp:document.getElementById("f_whatsapp").value,
+      produto:document.getElementById("f_produto").value, quantidade:document.getElementById("f_qtd").value,
+      cor:document.getElementById("f_cor").value, tamanho:document.getElementById("f_tamanho").value,
+      personalizacao:document.getElementById("f_person").value, valor, sinal, restante: Math.max(valor-sinal,0),
+      dataPedido:document.getElementById("f_data").value, prazoEntrega:document.getElementById("f_prazo").value,
+      status:document.getElementById("f_status").value, observacoes:document.getElementById("f_obs").value
+    };
+    const idx = orders.findIndex(o=>o.id===id);
+    if(idx>-1) orders[idx]=item; else orders.unshift(item);
+    store("adm_orders", orders);
+    closeModal(); renderAll();
+  });
+</script>
+</body>
+</html>

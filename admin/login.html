@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login — Painel Artesanatos da Mi</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="brand">🧶 Artesanatos da Mi</div>
+    <p style="color:var(--brown-soft);margin-bottom:24px;">Painel da artesã</p>
+    <form id="loginForm">
+      <div class="field" style="text-align:left;"><label>Senha de acesso</label><input type="password" id="pwd" required placeholder="Digite sua senha"></div>
+      <button class="btn" type="submit" style="width:100%;justify-content:center;">Entrar</button>
+      <p id="err" style="color:#b8524f;font-size:.85rem;margin-top:12px;display:none;">Senha incorreta. Tente novamente.</p>
+    </form>
+    <p style="font-size:.78rem;color:var(--brown-soft);margin-top:22px;">Senha padrão de demonstração: <b>mi2026</b><br>Altere em Configurações após o primeiro acesso.</p>
+  </div>
+</div>
+<script src="../js/data.js"></script>
+<script src="admin-core.js"></script>
+<script>
+  ensureSeed();
+  document.getElementById("loginForm").addEventListener("submit", (e)=>{
+    e.preventDefault();
+    const pwd = document.getElementById("pwd").value;
+    if(pwd === localStorage.getItem(ADMIN_PASSWORD_KEY)){
+      localStorage.setItem(ADMIN_SESSION_KEY, "true");
+      location.href = "dashboard.html";
+    }else{
+      document.getElementById("err").style.display = "block";
+    }
+  });
+</script>
+</body>
+</html>

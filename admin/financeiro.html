@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financeiro — Painel Artesanatos da Mi</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <nav class="sidebar" data-sidebar></nav>
+  <main class="main">
+    <div class="topbar">
+      <div><h1>Financeiro</h1><p>Acompanhe faturamento, recebimentos e despesas.</p></div>
+      <button class="btn" onclick="openModal()">+ Nova despesa</button>
+    </div>
+
+    <div class="stat-grid" id="stats"></div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <h3>Pagamentos por encomenda</h3>
+        <div class="table-wrap"><table><thead><tr><th>Cliente</th><th>Total</th><th>Pago</th><th>Restante</th><th>Situação</th></tr></thead><tbody id="tblPag"></tbody></table></div>
+      </div>
+      <div class="panel">
+        <h3>Despesas / custos</h3>
+        <div class="table-wrap"><table><thead><tr><th>Descrição</th><th>Valor</th><th>Data</th><th></th></tr></thead><tbody id="tblDesp"></tbody></table></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="modal-overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-head"><h3>Nova despesa</h3><button onclick="closeModal()">✕</button></div>
+    <form id="form">
+      <div class="field"><label>Descrição</label><input id="f_desc" required></div>
+      <div class="grid-2">
+        <div class="field"><label>Valor (R$)</label><input id="f_valor" type="number" step="0.01" required></div>
+        <div class="field"><label>Data</label><input id="f_data" type="date" required></div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn" type="submit">Salvar</button>
+        <button class="btn btn-ghost" type="button" onclick="closeModal()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="../js/data.js"></script>
+<script src="admin-core.js"></script>
+<script>
+  ensureSeed(); checkAuth(); renderSidebar("financeiro");
+
+  function renderAll(){
+    const orders = load("adm_orders");
+    const expenses = load("adm_expenses");
+    const mes = new Date().toISOString().slice(0,7);
+    const faturamentoMes = orders.filter(o=>(o.dataPedido||"").startsWith(mes)).reduce((s,o)=>s+Number(o.valor||0),0);
+    const recebido = orders.reduce((s,o)=>s+Number(o.sinal||0)+(o.status==="Entregue"?Number(o.restante||0):0),0);
+    const aReceber = orders.reduce((s,o)=>s+Number(o.restante||0),0);
+    const custos = expenses.reduce((s,d)=>s+Number(d.valor||0),0);
+    const lucro = faturamentoMes - custos;
+
+    document.getElementById("stats").innerHTML = `
+      <div class="stat-card"><div class="label">Faturamento do mês</div><div class="value">${money(faturamentoMes)}</div></div>
+      <div class="stat-card"><div class="label">Recebido</div><div class="value">${money(recebido)}</div></div>
+      <div class="stat-card"><div class="label">A receber</div><div class="value">${money(aReceber)}</div></div>
+      <div class="stat-card"><div class="label">Despesas</div><div class="value">${money(custos)}</div></div>
+      <div class="stat-card"><div class="label">Lucro estimado</div><div class="value">${money(lucro)}</div></div>
+    `;
+
+    document.getElementById("tblPag").innerHTML = orders.map(o=>{
+      const situacao = o.restante<=0 ? "pago" : (o.sinal>0 ? "parcial" : "pendente");
+      const label = o.restante<=0 ? "Pago" : (o.sinal>0 ? "Parcial" : "Pendente");
+      return `<tr><td>${o.cliente}</td><td>${money(o.valor)}</td><td>${money(o.sinal)}</td><td>${money(o.restante)}</td><td><span class="badge ${situacao}">${label}</span></td></tr>`;
+    }).join("") || `<tr><td colspan="5" class="empty">Nenhuma encomenda ainda</td></tr>`;
+
+    document.getElementById("tblDesp").innerHTML = expenses.map(d=>`
+      <tr><td>${d.desc}</td><td>${money(d.valor)}</td><td>${d.data}</td><td><button class="icon-btn" onclick="delDesp('${d.id}')">🗑️</button></td></tr>
+    `).join("") || `<tr><td colspan="4" class="empty">Nenhuma despesa registrada</td></tr>`;
+  }
+  renderAll();
+
+  function openModal(){ document.getElementById("form").reset(); document.getElementById("overlay").classList.add("open"); }
+  function closeModal(){ document.getElementById("overlay").classList.remove("open"); }
+  function delDesp(id){
+    if(!confirm("Excluir esta despesa?")) return;
+    store("adm_expenses", load("adm_expenses").filter(d=>d.id!==id));
+    renderAll();
+  }
+  document.getElementById("form").addEventListener("submit", (e)=>{
+    e.preventDefault();
+    const expenses = load("adm_expenses");
+    expenses.unshift({id:uid("d"), desc:document.getElementById("f_desc").value, valor:parseFloat(document.getElementById("f_valor").value)||0, data:document.getElementById("f_data").value});
+    store("adm_expenses", expenses);
+    closeModal(); renderAll();
+  });
+</script>
+</body>
+</html>

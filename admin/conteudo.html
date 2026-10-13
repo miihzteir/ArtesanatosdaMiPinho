@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conteúdo — Painel Artesanatos da Mi</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <nav class="sidebar" data-sidebar></nav>
+  <main class="main">
+    <div class="topbar">
+      <div><h1>Ajuda para postar</h1><p>Gere legendas prontas para divulgar no Instagram — é só escolher, copiar e postar.</p></div>
+    </div>
+
+    <div class="panel">
+      <div class="grid-2">
+        <div class="field"><label>Produto</label><select id="f_produto"></select></div>
+        <div class="field"><label>Tipo de texto</label>
+          <select id="f_tipo">
+            <option value="legenda">Legenda de produto</option>
+            <option value="lancamento">Anúncio de lançamento</option>
+            <option value="pronta">Pronta entrega</option>
+            <option value="encomenda">Encomenda personalizada</option>
+            <option value="story">Frase para story</option>
+            <option value="data">Data especial</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" id="dataField" style="display:none;">
+        <label>Qual data?</label>
+        <select id="f_data">
+          <option>Dia das Mães</option><option>Natal</option><option>Páscoa</option>
+          <option>Dia dos Namorados</option><option>Dia das Crianças</option>
+        </select>
+      </div>
+      <button class="btn" onclick="gerar()">Gerar texto</button>
+    </div>
+
+    <div class="panel" id="resultPanel" style="display:none;">
+      <h3>Sugestão de texto</h3>
+      <div class="content-card">
+        <textarea id="output" readonly></textarea>
+        <div style="margin-top:10px;"><button class="btn btn-sm" onclick="copiar()">Copiar texto</button></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../js/data.js"></script>
+<script src="admin-core.js"></script>
+<script>
+  ensureSeed(); checkAuth(); renderSidebar("conteudo");
+  const products = load("adm_products");
+  const settings = getSettings();
+  document.getElementById("f_produto").innerHTML = products.map(p=>`<option value="${p.id}">${p.nome}</option>`).join("");
+
+  document.getElementById("f_tipo").addEventListener("change", (e)=>{
+    document.getElementById("dataField").style.display = e.target.value === "data" ? "block" : "none";
+  });
+
+  function gerar(){
+    const p = products.find(x=>x.id===document.getElementById("f_produto").value) || products[0];
+    const tipo = document.getElementById("f_tipo").value;
+    const wa = `wa.me/${settings.whatsapp}`;
+    let txt = "";
+    if(tipo==="legenda"){
+      txt = `✨ ${p.nome} ✨\n\nFeita à mão, com todo o carinho da Artesanatos da Mi. ${p.desc}\n\n💰 ${money(p.preco)}\n📦 ${p.status==='pronta'?'Pronta entrega':'Sob encomenda — '+p.prazo}\n\nEncomende pelo WhatsApp: ${wa} 🧶`;
+    }else if(tipo==="lancamento"){
+      txt = `🌸 NOVIDADE NA ARTESANATOS DA MI 🌸\n\nChegou a ${p.nome}! Peça exclusiva, feita ponto a ponto especialmente para você.\n\n💰 ${money(p.preco)}\nManda mensagem e garante a sua: ${wa}`;
+    }else if(tipo==="pronta"){
+      txt = `📦 Pronta entrega!\n\n${p.nome} já está pronta e esperando por você. Sem espera, sem fila — é só chamar no WhatsApp e combinar a entrega.\n\n${wa}`;
+    }else if(tipo==="encomenda"){
+      txt = `🧶 Encomendas abertas!\n\nQuer uma peça do seu jeitinho? A ${p.nome} pode ser personalizada em cor e tamanho. Prazo médio: ${p.prazo}.\n\nChama no WhatsApp e vamos combinar tudo: ${wa}`;
+    }else if(tipo==="story"){
+      txt = `Ponto por ponto, com carinho 🤍🧶\nNovidades no story de hoje — arrasta pra cima e encomenda a sua!`;
+    }else if(tipo==="data"){
+      const data = document.getElementById("f_data").value;
+      txt = `💝 ${data} está chegando!\n\nQue tal presentear com algo feito à mão? A ${p.nome} é uma ótima pedida — cheia de significado e carinho em cada ponto.\n\nEncomende com antecedência: ${wa}`;
+    }
+    document.getElementById("output").value = txt;
+    document.getElementById("resultPanel").style.display = "block";
+  }
+  function copiar(){
+    const el = document.getElementById("output");
+    el.select(); document.execCommand("copy");
+    alert("Texto copiado!");
+  }
+</script>
+</body>
+</html>

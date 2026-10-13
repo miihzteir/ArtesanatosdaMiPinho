@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clientes — Painel Artesanatos da Mi</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <nav class="sidebar" data-sidebar></nav>
+  <main class="main">
+    <div class="topbar">
+      <div><h1>Clientes</h1><p>Veja quem já comprou e o histórico de cada um.</p></div>
+      <button class="btn" onclick="openModal()">+ Novo cliente</button>
+    </div>
+    <div class="panel">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Nome</th><th>WhatsApp</th><th>Cidade</th><th>Pedidos</th><th></th></tr></thead>
+          <tbody id="tbl"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="modal-overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-head"><h3 id="modalTitle">Novo cliente</h3><button onclick="closeModal()">✕</button></div>
+    <form id="form">
+      <input type="hidden" id="f_id">
+      <div class="field"><label>Nome</label><input id="f_nome" required></div>
+      <div class="grid-2">
+        <div class="field"><label>WhatsApp</label><input id="f_whatsapp" required></div>
+        <div class="field"><label>Cidade</label><input id="f_cidade"></div>
+      </div>
+      <div class="field"><label>Observações</label><textarea id="f_obs"></textarea></div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn" type="submit">Salvar</button>
+        <button class="btn btn-ghost" type="button" onclick="closeModal()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-overlay" id="historyOverlay">
+  <div class="modal">
+    <div class="modal-head"><h3>Histórico de pedidos</h3><button onclick="document.getElementById('historyOverlay').classList.remove('open')">✕</button></div>
+    <div id="historyBody"></div>
+  </div>
+</div>
+
+<script src="../js/data.js"></script>
+<script src="admin-core.js"></script>
+<script>
+  ensureSeed(); checkAuth(); renderSidebar("clientes");
+
+  function renderTable(){
+    const customers = load("adm_customers");
+    const orders = load("adm_orders");
+    document.getElementById("tbl").innerHTML = customers.map(c=>{
+      const pedidos = orders.filter(o=>o.cliente===c.nome);
+      return `
+      <tr>
+        <td><b>${c.nome}</b></td>
+        <td>${c.whatsapp}</td>
+        <td>${c.cidade||'—'}</td>
+        <td><a href="#" onclick="showHistory('${c.nome.replace(/'/g,"\\'")}');return false;">${pedidos.length} pedido(s)</a></td>
+        <td>
+          <button class="icon-btn" onclick="editItem('${c.id}')">✏️</button>
+          <button class="icon-btn" onclick="delItem('${c.id}')">🗑️</button>
+        </td>
+      </tr>`;
+    }).join("") || `<tr><td colspan="5" class="empty">Nenhum cliente cadastrado ainda</td></tr>`;
+  }
+  renderTable();
+
+  function showHistory(nome){
+    const orders = load("adm_orders").filter(o=>o.cliente===nome);
+    document.getElementById("historyBody").innerHTML = orders.length ? `
+      <table><thead><tr><th>Peça</th><th>Valor</th><th>Status</th><th>Data</th></tr></thead>
+      <tbody>${orders.map(o=>`<tr><td>${o.produto}</td><td>${money(o.valor)}</td><td><span class="badge ${statusClass(o.status)}">${o.status}</span></td><td>${o.dataPedido||'—'}</td></tr>`).join("")}</tbody></table>
+    ` : `<p class="empty">Nenhum pedido registrado para este cliente ainda.</p>`;
+    document.getElementById("historyOverlay").classList.add("open");
+  }
+
+  function openModal(){
+    document.getElementById("modalTitle").textContent = "Novo cliente";
+    document.getElementById("form").reset();
+    document.getElementById("f_id").value = "";
+    document.getElementById("overlay").classList.add("open");
+  }
+  function closeModal(){ document.getElementById("overlay").classList.remove("open"); }
+
+  function editItem(id){
+    const c = load("adm_customers").find(x=>x.id===id);
+    if(!c) return;
+    document.getElementById("modalTitle").textContent = "Editar cliente";
+    document.getElementById("f_id").value = c.id;
+    document.getElementById("f_nome").value = c.nome;
+    document.getElementById("f_whatsapp").value = c.whatsapp;
+    document.getElementById("f_cidade").value = c.cidade||"";
+    document.getElementById("f_obs").value = c.obs||"";
+    document.getElementById("overlay").classList.add("open");
+  }
+  function delItem(id){
+    if(!confirm("Excluir este cliente?")) return;
+    store("adm_customers", load("adm_customers").filter(c=>c.id!==id));
+    renderTable();
+  }
+
+  document.getElementById("form").addEventListener("submit", (e)=>{
+    e.preventDefault();
+    const customers = load("adm_customers");
+    const id = document.getElementById("f_id").value || uid("c");
+    const item = {
+      id, nome:document.getElementById("f_nome").value, whatsapp:document.getElementById("f_whatsapp").value,
+      cidade:document.getElementById("f_cidade").value, obs:document.getElementById("f_obs").value
+    };
+    const idx = customers.findIndex(c=>c.id===id);
+    if(idx>-1) customers[idx]=item; else customers.unshift(item);
+    store("adm_customers", customers);
+    closeModal(); renderTable();
+  });
+</script>
+</body>
+</html>

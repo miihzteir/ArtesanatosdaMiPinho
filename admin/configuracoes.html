@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configurações — Painel Artesanatos da Mi</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <nav class="sidebar" data-sidebar></nav>
+  <main class="main">
+    <div class="topbar">
+      <div><h1>Configurações</h1><p>Dados da marca, exibidos automaticamente em todo o site.</p></div>
+    </div>
+
+    <div class="panel" style="max-width:680px;">
+      <form id="form">
+        <div class="field"><label>Nome da marca</label><input id="f_brand"></div>
+        <div class="field"><label>Slogan</label><input id="f_slogan"></div>
+        <div class="grid-2">
+          <div class="field"><label>WhatsApp (só números, com DDI+DDD)</label><input id="f_whats" placeholder="5566999999999"></div>
+          <div class="field"><label>Instagram (sem @)</label><input id="f_insta"></div>
+        </div>
+        <div class="grid-2">
+          <div class="field"><label>E-mail</label><input id="f_email"></div>
+          <div class="field"><label>Cidade / região</label><input id="f_cidade"></div>
+        </div>
+        <div class="field"><label>Horário de atendimento</label><input id="f_horario"></div>
+        <div class="field"><label>Mensagem padrão do WhatsApp</label><textarea id="f_msg"></textarea></div>
+        <button class="btn" type="submit">Salvar configurações</button>
+        <p id="saved" style="color:#3f6c4e;display:none;margin-top:10px;">Configurações salvas! ✅</p>
+      </form>
+    </div>
+
+    <div class="panel" style="max-width:680px;">
+      <h3>Alterar senha do painel</h3>
+      <div class="field"><label>Nova senha</label><input id="newPwd" type="password"></div>
+      <button class="btn btn-outline" onclick="changePwd()">Atualizar senha</button>
+    </div>
+
+    <div class="panel" style="max-width:680px;">
+      <h3>Sobre os dados deste painel</h3>
+      <p style="color:var(--brown-soft);font-size:.9rem;">
+        Por padrão, os produtos, encomendas, clientes e demais dados ficam salvos no navegador (localStorage) —
+        ótimo para testar e usar em um único computador. Para acessar de vários aparelhos, com fotos e login
+        realmente seguro, o próximo passo é conectar o projeto ao <b>Firebase</b> (Authentication + Firestore + Storage).
+        Quando quiser evoluir para isso, é só pedir — a estrutura de dados já foi pensada para essa migração
+        (coleções: products, categories, orders, customers, materials, finances, settings).
+      </p>
+    </div>
+  </main>
+</div>
+
+<script src="../js/data.js"></script>
+<script src="admin-core.js"></script>
+<script>
+  ensureSeed(); checkAuth(); renderSidebar("configuracoes");
+  const s = getSettings();
+  document.getElementById("f_brand").value = s.brand;
+  document.getElementById("f_slogan").value = s.slogan;
+  document.getElementById("f_whats").value = s.whatsapp;
+  document.getElementById("f_insta").value = s.instagram;
+  document.getElementById("f_email").value = s.email;
+  document.getElementById("f_cidade").value = s.cidade;
+  document.getElementById("f_horario").value = s.horario;
+  document.getElementById("f_msg").value = s.whatsappMsgPadrao;
+
+  document.getElementById("form").addEventListener("submit", (e)=>{
+    e.preventDefault();
+    store("adm_settings", {
+      brand:document.getElementById("f_brand").value, slogan:document.getElementById("f_slogan").value,
+      whatsapp:document.getElementById("f_whats").value, instagram:document.getElementById("f_insta").value,
+      email:document.getElementById("f_email").value, cidade:document.getElementById("f_cidade").value,
+      horario:document.getElementById("f_horario").value, whatsappMsgPadrao:document.getElementById("f_msg").value
+    });
+    document.getElementById("saved").style.display = "block";
+    setTimeout(()=>document.getElementById("saved").style.display="none", 2500);
+  });
+
+  function changePwd(){
+    const p = document.getElementById("newPwd").value;
+    if(p.length < 4){ alert("Use uma senha com pelo menos 4 caracteres."); return; }
+    localStorage.setItem(ADMIN_PASSWORD_KEY, p);
+    alert("Senha atualizada!");
+    document.getElementById("newPwd").value = "";
+  }
+</script>
+</body>
+</html>

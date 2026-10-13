@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Produtos — Painel Artesanatos da Mi</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <nav class="sidebar" data-sidebar></nav>
+  <main class="main">
+    <div class="topbar">
+      <div><h1>Produtos</h1><p>Cadastre e gerencie as peças do catálogo.</p></div>
+      <button class="btn" onclick="openModal()">+ Novo produto</button>
+    </div>
+
+    <div class="panel">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Nome</th><th>Categoria</th><th>Preço</th><th>Status</th><th>Destaques</th><th></th></tr></thead>
+          <tbody id="tbl"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="modal-overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-head"><h3 id="modalTitle">Novo produto</h3><button onclick="closeModal()">✕</button></div>
+    <form id="form">
+      <input type="hidden" id="f_id">
+      <div class="field"><label>Nome</label><input id="f_nome" required></div>
+      <div class="grid-2">
+        <div class="field"><label>Categoria</label><select id="f_categoria"></select></div>
+        <div class="field"><label>Preço (R$)</label><input id="f_preco" type="number" step="0.01" required></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>Disponibilidade</label>
+          <select id="f_status"><option value="pronta">Pronta entrega</option><option value="encomenda">Sob encomenda</option></select>
+        </div>
+        <div class="field"><label>Prazo de produção</label><input id="f_prazo" placeholder="Ex.: 7 dias úteis"></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>Cores (separe por vírgula)</label><input id="f_cores" placeholder="Rosa, Bege"></div>
+        <div class="field"><label>Tamanho</label><input id="f_tamanho" placeholder="Ex.: 30x24cm"></div>
+      </div>
+      <div class="field"><label>Descrição</label><textarea id="f_desc"></textarea></div>
+      <div class="grid-2">
+        <div class="field"><label><input type="checkbox" id="f_person" style="width:auto;"> Personalizável</label></div>
+        <div class="field"><label><input type="checkbox" id="f_destaque" style="width:auto;"> Destaque</label></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label><input type="checkbox" id="f_lanc" style="width:auto;"> Lançamento</label></div>
+        <div class="field"><label><input type="checkbox" id="f_maisv" style="width:auto;"> Mais vendido</label></div>
+      </div>
+      <p style="font-size:.8rem;color:var(--brown-soft);">📷 Upload de fotos: funciona melhor conectando um serviço de armazenamento (ex. Firebase Storage) — veja a nota em Configurações.</p>
+      <div style="display:flex;gap:10px;margin-top:10px;">
+        <button class="btn" type="submit">Salvar</button>
+        <button class="btn btn-ghost" type="button" onclick="closeModal()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="../js/data.js"></script>
+<script src="admin-core.js"></script>
+<script>
+  ensureSeed(); checkAuth(); renderSidebar("produtos");
+  const cats = getCategories();
+  document.getElementById("f_categoria").innerHTML = cats.map(c=>`<option value="${c.id}">${c.nome}</option>`).join("");
+
+  function renderTable(){
+    const products = load("adm_products");
+    document.getElementById("tbl").innerHTML = products.map(p=>`
+      <tr>
+        <td><b>${p.nome}</b></td>
+        <td>${cats.find(c=>c.id===p.categoria)?.nome || p.categoria}</td>
+        <td>${money(p.preco)}</td>
+        <td><span class="badge ${p.status==='pronta'?'entregue':'aguardando'}">${p.status==='pronta'?'Pronta entrega':'Sob encomenda'}</span></td>
+        <td>${[p.destaque&&'Destaque',p.lancamento&&'Lançamento',p.maisVendido&&'Mais vendido'].filter(Boolean).join(', ')||'—'}</td>
+        <td>
+          <button class="icon-btn" onclick="editItem('${p.id}')">✏️</button>
+          <button class="icon-btn" onclick="delItem('${p.id}')">🗑️</button>
+        </td>
+      </tr>
+    `).join("") || `<tr><td colspan="6" class="empty">Nenhum produto cadastrado ainda</td></tr>`;
+  }
+  renderTable();
+
+  function openModal(){
+    document.getElementById("modalTitle").textContent = "Novo produto";
+    document.getElementById("form").reset();
+    document.getElementById("f_id").value = "";
+    document.getElementById("overlay").classList.add("open");
+  }
+  function closeModal(){ document.getElementById("overlay").classList.remove("open"); }
+
+  function editItem(id){
+    const p = load("adm_products").find(x=>x.id===id);
+    if(!p) return;
+    document.getElementById("modalTitle").textContent = "Editar produto";
+    document.getElementById("f_id").value = p.id;
+    document.getElementById("f_nome").value = p.nome;
+    document.getElementById("f_categoria").value = p.categoria;
+    document.getElementById("f_preco").value = p.preco;
+    document.getElementById("f_status").value = p.status;
+    document.getElementById("f_prazo").value = p.prazo;
+    document.getElementById("f_cores").value = (p.cores||[]).join(", ");
+    document.getElementById("f_tamanho").value = p.tamanho;
+    document.getElementById("f_desc").value = p.desc;
+    document.getElementById("f_person").checked = !!p.personalizavel;
+    document.getElementById("f_destaque").checked = !!p.destaque;
+    document.getElementById("f_lanc").checked = !!p.lancamento;
+    document.getElementById("f_maisv").checked = !!p.maisVendido;
+    document.getElementById("overlay").classList.add("open");
+  }
+
+  function delItem(id){
+    if(!confirm("Excluir este produto?")) return;
+    store("adm_products", load("adm_products").filter(p=>p.id!==id));
+    renderTable();
+  }
+
+  document.getElementById("form").addEventListener("submit", (e)=>{
+    e.preventDefault();
+    const products = load("adm_products");
+    const id = document.getElementById("f_id").value || uid("p");
+    const item = {
+      id, nome:document.getElementById("f_nome").value, categoria:document.getElementById("f_categoria").value,
+      preco:parseFloat(document.getElementById("f_preco").value)||0, status:document.getElementById("f_status").value,
+      prazo:document.getElementById("f_prazo").value, cores:document.getElementById("f_cores").value.split(",").map(s=>s.trim()).filter(Boolean),
+      tamanho:document.getElementById("f_tamanho").value, desc:document.getElementById("f_desc").value,
+      personalizavel:document.getElementById("f_person").checked, destaque:document.getElementById("f_destaque").checked,
+      lancamento:document.getElementById("f_lanc").checked, maisVendido:document.getElementById("f_maisv").checked
+    };
+    const idx = products.findIndex(p=>p.id===id);
+    if(idx>-1) products[idx] = item; else products.unshift(item);
+    store("adm_products", products);
+    closeModal(); renderTable();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estoque — Painel Artesanatos da Mi</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <nav class="sidebar" data-sidebar></nav>
+  <main class="main">
+    <div class="topbar">
+      <div><h1>Estoque de materiais</h1><p>Controle fios, enchimentos e acessórios.</p></div>
+      <button class="btn" onclick="openModal()">+ Novo item</button>
+    </div>
+    <div class="panel">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Item</th><th>Categoria</th><th>Quantidade</th><th>Custo unit.</th><th>Situação</th><th></th></tr></thead>
+          <tbody id="tbl"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="modal-overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-head"><h3 id="modalTitle">Novo item</h3><button onclick="closeModal()">✕</button></div>
+    <form id="form">
+      <input type="hidden" id="f_id">
+      <div class="field"><label>Nome do item</label><input id="f_nome" required></div>
+      <div class="grid-2">
+        <div class="field"><label>Categoria</label><input id="f_categoria" placeholder="Fios, Enchimento..."></div>
+        <div class="field"><label>Unidade</label><input id="f_unidade" placeholder="novelos, kg, un..."></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>Quantidade atual</label><input id="f_qtd" type="number" step="0.01" value="0"></div>
+        <div class="field"><label>Alerta de estoque baixo (mínimo)</label><input id="f_min" type="number" step="0.01" value="1"></div>
+      </div>
+      <div class="field"><label>Custo unitário (R$)</label><input id="f_custo" type="number" step="0.01" value="0"></div>
+      <div class="field"><label>Observações</label><textarea id="f_obs"></textarea></div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn" type="submit">Salvar</button>
+        <button class="btn btn-ghost" type="button" onclick="closeModal()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="../js/data.js"></script>
+<script src="admin-core.js"></script>
+<script>
+  ensureSeed(); checkAuth(); renderSidebar("estoque");
+
+  function renderTable(){
+    const stock = load("adm_stock");
+    document.getElementById("tbl").innerHTML = stock.map(s=>{
+      const baixo = Number(s.quantidade) <= Number(s.min);
+      return `
+      <tr>
+        <td><b>${s.nome}</b>${s.obs?`<br><span style="font-size:.78rem;color:var(--brown-soft)">${s.obs}</span>`:''}</td>
+        <td>${s.categoria}</td>
+        <td>${s.quantidade} ${s.unidade}</td>
+        <td>${money(s.custo)}</td>
+        <td>${baixo ? '<span class="badge baixo">Estoque baixo</span>' : '<span class="badge pago">OK</span>'}</td>
+        <td>
+          <button class="icon-btn" onclick="editItem('${s.id}')">✏️</button>
+          <button class="icon-btn" onclick="delItem('${s.id}')">🗑️</button>
+        </td>
+      </tr>`;
+    }).join("") || `<tr><td colspan="6" class="empty">Nenhum item cadastrado ainda</td></tr>`;
+  }
+  renderTable();
+
+  function openModal(){
+    document.getElementById("modalTitle").textContent = "Novo item";
+    document.getElementById("form").reset();
+    document.getElementById("f_id").value = "";
+    document.getElementById("overlay").classList.add("open");
+  }
+  function closeModal(){ document.getElementById("overlay").classList.remove("open"); }
+
+  function editItem(id){
+    const s = load("adm_stock").find(x=>x.id===id);
+    if(!s) return;
+    document.getElementById("modalTitle").textContent = "Editar item";
+    document.getElementById("f_id").value = s.id;
+    document.getElementById("f_nome").value = s.nome;
+    document.getElementById("f_categoria").value = s.categoria;
+    document.getElementById("f_unidade").value = s.unidade;
+    document.getElementById("f_qtd").value = s.quantidade;
+    document.getElementById("f_min").value = s.min;
+    document.getElementById("f_custo").value = s.custo;
+    document.getElementById("f_obs").value = s.obs||"";
+    document.getElementById("overlay").classList.add("open");
+  }
+  function delItem(id){
+    if(!confirm("Excluir este item do estoque?")) return;
+    store("adm_stock", load("adm_stock").filter(s=>s.id!==id));
+    renderTable();
+  }
+
+  document.getElementById("form").addEventListener("submit", (e)=>{
+    e.preventDefault();
+    const stock = load("adm_stock");
+    const id = document.getElementById("f_id").value || uid("m");
+    const item = {
+      id, nome:document.getElementById("f_nome").value, categoria:document.getElementById("f_categoria").value,
+      unidade:document.getElementById("f_unidade").value, quantidade:parseFloat(document.getElementById("f_qtd").value)||0,
+      min:parseFloat(document.getElementById("f_min").value)||0, custo:parseFloat(document.getElementById("f_custo").value)||0,
+      obs:document.getElementById("f_obs").value
+    };
+    const idx = stock.findIndex(s=>s.id===id);
+    if(idx>-1) stock[idx]=item; else stock.unshift(item);
+    store("adm_stock", stock);
+    closeModal(); renderTable();
+  });
+</script>
+</body>
+</html>

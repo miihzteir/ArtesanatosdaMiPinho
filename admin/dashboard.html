@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Painel Artesanatos da Mi</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <nav class="sidebar" data-sidebar></nav>
+  <main class="main">
+    <div class="topbar">
+      <div><h1>Olá, Mi 👋</h1><p>Aqui está um resumo do seu negócio hoje.</p></div>
+    </div>
+
+    <div class="stat-grid" id="stats"></div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <h3>Encomendas recentes</h3>
+        <div class="table-wrap"><table id="tblRecent"><thead><tr><th>Cliente</th><th>Peça</th><th>Status</th></tr></thead><tbody></tbody></table></div>
+      </div>
+      <div class="panel">
+        <h3>Próximos prazos de entrega</h3>
+        <div class="table-wrap"><table id="tblPrazos"><thead><tr><th>Cliente</th><th>Peça</th><th>Prazo</th></tr></thead><tbody></tbody></table></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Pagamentos pendentes</h3>
+      <div class="table-wrap"><table id="tblPend"><thead><tr><th>Cliente</th><th>Peça</th><th>Restante</th></tr></thead><tbody></tbody></table></div>
+    </div>
+  </main>
+</div>
+
+<script src="../js/data.js"></script>
+<script src="admin-core.js"></script>
+<script>
+  ensureSeed(); checkAuth(); renderSidebar("dashboard");
+
+  const orders = load("adm_orders");
+  const products = load("adm_products");
+  const customers = load("adm_customers");
+  const emAndamento = orders.filter(o=>!["Entregue","Cancelado"].includes(o.status)).length;
+  const novos = orders.filter(o=>o.status==="Novo pedido").length;
+  const concluidos = orders.filter(o=>o.status==="Entregue").length;
+  const mes = new Date().toISOString().slice(0,7);
+  const vendidoMes = orders.filter(o=>(o.dataPedido||"").startsWith(mes)).reduce((s,o)=>s+Number(o.valor||0),0);
+  const pendente = orders.reduce((s,o)=>s+Number(o.restante||0),0);
+  const stock = load("adm_stock");
+  const estoqueBaixo = stock.filter(s=>Number(s.quantidade) <= Number(s.min)).length;
+
+  document.getElementById("stats").innerHTML = `
+    <div class="stat-card"><div class="label">Pedidos em andamento</div><div class="value">${emAndamento}</div></div>
+    <div class="stat-card"><div class="label">Pedidos novos</div><div class="value">${novos}</div></div>
+    <div class="stat-card"><div class="label">Pedidos concluídos</div><div class="value">${concluidos}</div></div>
+    <div class="stat-card"><div class="label">Produtos cadastrados</div><div class="value">${products.length}</div></div>
+    <div class="stat-card"><div class="label">Clientes cadastrados</div><div class="value">${customers.length}</div></div>
+    <div class="stat-card"><div class="label">Vendido no mês</div><div class="value">${money(vendidoMes)}</div></div>
+    <div class="stat-card"><div class="label">Valor pendente</div><div class="value">${money(pendente)}</div></div>
+    <div class="stat-card"><div class="label">Estoque baixo</div><div class="value">${estoqueBaixo}</div></div>
+  `;
+
+  document.querySelector("#tblRecent tbody").innerHTML = orders.slice(0,5).map(o=>`
+    <tr><td>${o.cliente}</td><td>${o.produto}</td><td><span class="badge ${statusClass(o.status)}">${o.status}</span></td></tr>
+  `).join("") || `<tr><td colspan="3" class="empty">Nenhuma encomenda ainda</td></tr>`;
+
+  const comPrazo = orders.filter(o=>o.prazoEntrega).sort((a,b)=>a.prazoEntrega.localeCompare(b.prazoEntrega));
+  document.querySelector("#tblPrazos tbody").innerHTML = comPrazo.slice(0,5).map(o=>`
+    <tr><td>${o.cliente}</td><td>${o.produto}</td><td>${o.prazoEntrega}</td></tr>
+  `).join("") || `<tr><td colspan="3" class="empty">Nenhum prazo cadastrado</td></tr>`;
+
+  const pend = orders.filter(o=>Number(o.restante) > 0);
+  document.querySelector("#tblPend tbody").innerHTML = pend.map(o=>`
+    <tr><td>${o.cliente}</td><td>${o.produto}</td><td>${money(o.restante)}</td></tr>
+  `).join("") || `<tr><td colspan="3" class="empty">Nenhum pagamento pendente 🎉</td></tr>`;
+</script>
+</body>
+</html>

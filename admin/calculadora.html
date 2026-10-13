@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de preço — Painel Artesanatos da Mi</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <nav class="sidebar" data-sidebar></nav>
+  <main class="main">
+    <div class="topbar">
+      <div><h1>Calculadora de preço</h1><p>Descubra o valor justo para cada peça, sem achismo.</p></div>
+    </div>
+
+    <div class="panel" style="max-width:640px;">
+      <div class="grid-2">
+        <div class="field"><label>Custo do material (R$)</label><input id="material" type="number" step="0.01" value="30"></div>
+        <div class="field"><label>Horas trabalhadas</label><input id="horas" type="number" step="0.5" value="5"></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>Valor da sua hora (R$)</label><input id="valorHora" type="number" step="0.5" value="12"></div>
+        <div class="field"><label>Custos extras (R$)</label><input id="extras" type="number" step="0.01" value="5"></div>
+      </div>
+      <div class="field"><label>Margem de lucro desejada (%)</label><input id="margem" type="number" step="1" value="25"></div>
+      <button class="btn" onclick="calcular()">Calcular preço</button>
+
+      <div class="result-box" id="result" style="display:none;">
+        <div class="row"><span>Custo do material</span><span id="rMaterial"></span></div>
+        <div class="row"><span>Custo da mão de obra</span><span id="rMaoObra"></span></div>
+        <div class="row"><span>Custos extras</span><span id="rExtras"></span></div>
+        <div class="row"><span>Custo total</span><span id="rTotal"></span></div>
+        <div class="row"><span>Margem de lucro</span><span id="rMargemValor"></span></div>
+        <div class="row total"><span>Valor sugerido de venda</span><span id="rVenda"></span></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../js/data.js"></script>
+<script src="admin-core.js"></script>
+<script>
+  ensureSeed(); checkAuth(); renderSidebar("calculadora");
+
+  function calcular(){
+    const material = parseFloat(document.getElementById("material").value)||0;
+    const horas = parseFloat(document.getElementById("horas").value)||0;
+    const valorHora = parseFloat(document.getElementById("valorHora").value)||0;
+    const extras = parseFloat(document.getElementById("extras").value)||0;
+    const margem = parseFloat(document.getElementById("margem").value)||0;
+
+    const maoObra = horas * valorHora;
+    const custoTotal = material + maoObra + extras;
+    const margemValor = custoTotal * (margem/100);
+    const venda = custoTotal + margemValor;
+
+    document.getElementById("rMaterial").textContent = money(material);
+    document.getElementById("rMaoObra").textContent = money(maoObra);
+    document.getElementById("rExtras").textContent = money(extras);
+    document.getElementById("rTotal").textContent = money(custoTotal);
+    document.getElementById("rMargemValor").textContent = money(margemValor) + ` (lucro estimado)`;
+    document.getElementById("rVenda").textContent = money(venda);
+    document.getElementById("result").style.display = "block";
+  }
+  calcular();
+</script>
+</body>
+</html>
