@@ -13,7 +13,28 @@ let STORE_SETTINGS_DEFAULT = {
   cidade: "Sinop - MT",
   horario: "Seg a sáb, 9h às 18h",
   whatsappMsgPadrao: "Olá, Mi! Gostaria de saber mais sobre os seus trabalhos de crochê.",
-  avisoPedido: "Frete, prazo e forma de pagamento são combinados com a Mi pelo WhatsApp."
+  avisoPedido: "Frete, prazo e forma de pagamento são combinados com a Mi pelo WhatsApp.",
+  faixaAtiva: true,
+  faixaTexto: "Peças feitas à mão com carinho · Encomendas abertas",
+  faixaLink: "catalogo.html",
+  freteCidadeLocal: "Sinop",
+  freteValorLocal: "",
+  freteGratisAcima: "",
+  freteOutros: "Para outras cidades, o frete é combinado pelo WhatsApp (Correios ou transportadora).",
+  videoUrl: "",
+  fotoMi: "",
+  galeria: [],
+  cupons: [
+    { codigo: "BEMVINDA10", tipo: "percent", valor: 10, ativo: false }
+  ],
+  colecoes: [
+    { id: "natal", nome: "Coleção de Natal", descricao: "Presentes e decoração feitos à mão para a época mais bonita do ano.", ativa: true }
+  ],
+  depoimentos: [
+    { nome: "Ana Paula", texto: "A bolsa ficou ainda mais linda do que eu imaginei, e o cuidado no acabamento é impressionante.", estrelas: 5 },
+    { nome: "Rafaela", texto: "Encomendei um amigurumi para o aniversário da minha filha, chegou no prazo e com muito carinho.", estrelas: 5 },
+    { nome: "Camila", texto: "Atendimento super atencioso, tirou todas as minhas dúvidas antes de fechar o pedido.", estrelas: 5 }
+  ]
 };
 
 let CATEGORIES_DEFAULT = [
@@ -25,8 +46,8 @@ let CATEGORIES_DEFAULT = [
   { id: "decoracao", nome: "Decoração", icon: "flower" },
   { id: "presentes", nome: "Presentes", icon: "gift" },
   { id: "personalizados", nome: "Personalizados", icon: "heart" },
-  { id: "infantil", nome: "Infantil", icon: "bear" },
-  { id: "utilidades", nome: "Utilidades", icon: "plate" }
+  { id: "infantil", nome: "Infantil", icon: "sapatinho" },
+  { id: "utilidades", nome: "Utilidades", icon: "cesto" }
 ];
 
 let PRODUCTS_DEFAULT = [

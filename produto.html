@@ -2,10 +2,12 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<meta name="theme-color" content="#B23A55">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Produto — Artesanatos da Mi Pinho</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22><text y=%2236%22 font-size=%2236%22>🧶</text></svg>">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=20261014a">
+<style id="notap">html,body,*{-webkit-tap-highlight-color:rgba(0,0,0,0)!important;-webkit-touch-callout:none}a,button,summary,label,.btn,.chip,.product-card,.cat-bubble{-webkit-tap-highlight-color:rgba(0,0,0,0)!important;-webkit-user-select:none;user-select:none;outline:none}input,textarea,select{-webkit-user-select:auto;user-select:auto}a:focus,button:focus,summary:focus,label:focus,.btn:focus{outline:none}a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #B23A55;outline-offset:2px}</style>
 </head>
 <body class="page-pdp">
 
@@ -21,6 +23,7 @@
     </nav>
     <div class="head-actions">
       <a target="_blank" rel="noopener" data-wa-generic href="#" class="btn btn-primary btn-sm head-wa">WhatsApp</a>
+      <a href="favoritos.html" class="fav-link" aria-label="Meus favoritos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 21C5 15.500 3 11.500 3 8.500A4.500 4.500 0 0 1 7.500 4C9.500 4 11 5 12 6.800 13 5 14.500 4 16.500 4A4.500 4.500 0 0 1 21 8.500c0 3-2 7-9 12.500z"/></svg><span class="cart-count" data-fav-count hidden>0</span></a>
       <a href="carrinho.html" class="cart-link" aria-label="Abrir carrinho"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span class="cart-count" data-cart-count hidden>0</span></a>
       <button class="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu">☰</button>
     </div>
@@ -45,13 +48,18 @@
           <span class="lbl">Cor</span>
           <div class="chips" data-pdp-cores></div>
         </div>
-        <div class="opt">
+        <div class="opt" data-pdp-qty-wrap>
           <span class="lbl">Quantidade</span>
           <div class="stepper" role="group" aria-label="Quantidade">
             <button type="button" data-pdp-minus aria-label="Diminuir">−</button>
             <output data-pdp-qtd>1</output>
             <button type="button" data-pdp-plus aria-label="Aumentar">+</button>
           </div>
+        </div>
+        <div class="sold-box" data-pdp-sold hidden><b>Esta peça esgotou</b><span>Quer que a Mi avise quando ela voltar, ou faça uma igual sob encomenda? Toque no botão abaixo.</span></div>
+        <div class="pdp-tools">
+          <button type="button" class="btn ghost" data-pdp-fav aria-pressed="false">♡ Favoritar</button>
+          <button type="button" class="btn ghost" data-pdp-share>Compartilhar</button>
         </div>
         <div class="pdp-actions">
           <button type="button" data-pdp-add class="btn btn-primary">Adicionar ao carrinho</button>
@@ -90,6 +98,7 @@
         <a href="index.html">Início</a>
         <a href="catalogo.html">Catálogo</a>
         <a href="carrinho.html">Carrinho</a>
+        <a href="favoritos.html">Favoritos</a>
         <a href="encomenda.html">Encomendas</a>
         <a href="sobre.html">Sobre a Mi</a>
       </div>
@@ -115,10 +124,10 @@
 
 <a class="wa-float" target="_blank" rel="noopener" data-wa-float href="#" aria-label="Falar no WhatsApp"></a>
 
-<script src="js/data.js"></script>
-<script src="js/icons.js"></script>
-<script src="js/cart.js"></script>
-<script src="js/main.js"></script>
+<script src="js/data.js?v=20261014a"></script>
+<script src="js/icons.js?v=20261014a"></script>
+<script src="js/cart.js?v=20261014a"></script>
+<script src="js/main.js?v=20261014a"></script>
 <script>document.querySelector('.wa-float').innerHTML = ICONS.whats;</script>
 </body>
 </html>

@@ -8,7 +8,50 @@
     "cidade": "Sinop - MT",
     "horario": "Seg a sáb, 9h às 18h",
     "whatsappMsgPadrao": "Olá, Mi! Gostaria de saber mais sobre os seus trabalhos de crochê.",
-    "avisoPedido": "Frete, prazo e forma de pagamento são combinados com a Mi pelo WhatsApp."
+    "avisoPedido": "Frete, prazo e forma de pagamento são combinados com a Mi pelo WhatsApp.",
+    "faixaAtiva": true,
+    "faixaTexto": "Peças feitas à mão com carinho · Encomendas abertas",
+    "faixaLink": "catalogo.html",
+    "freteCidadeLocal": "Sinop",
+    "freteValorLocal": "",
+    "freteGratisAcima": "",
+    "freteOutros": "Para outras cidades, o frete é combinado pelo WhatsApp (Correios ou transportadora).",
+    "videoUrl": "",
+    "fotoMi": "",
+    "galeria": [],
+    "cupons": [
+      {
+        "codigo": "BEMVINDA10",
+        "tipo": "percent",
+        "valor": 10,
+        "ativo": false
+      }
+    ],
+    "colecoes": [
+      {
+        "id": "natal",
+        "nome": "Coleção de Natal",
+        "descricao": "Presentes e decoração feitos à mão para a época mais bonita do ano.",
+        "ativa": true
+      }
+    ],
+    "depoimentos": [
+      {
+        "nome": "Ana Paula",
+        "texto": "A bolsa ficou ainda mais linda do que eu imaginei, e o cuidado no acabamento é impressionante.",
+        "estrelas": 5
+      },
+      {
+        "nome": "Rafaela",
+        "texto": "Encomendei um amigurumi para o aniversário da minha filha, chegou no prazo e com muito carinho.",
+        "estrelas": 5
+      },
+      {
+        "nome": "Camila",
+        "texto": "Atendimento super atencioso, tirou todas as minhas dúvidas antes de fechar o pedido.",
+        "estrelas": 5
+      }
+    ]
   },
   "categories": [
     {
@@ -54,12 +97,12 @@
     {
       "id": "infantil",
       "nome": "Infantil",
-      "icon": "bear"
+      "icon": "sapatinho"
     },
     {
       "id": "utilidades",
       "nome": "Utilidades",
-      "icon": "plate"
+      "icon": "cesto"
     }
   ],
   "products": [
@@ -81,7 +124,9 @@
       "maisVendido": true,
       "desc": "Bolsa de mão trançada em fio egípcio, forro interno e alça dupla. Um clássico atemporal feito ponto a ponto.",
       "fotos": [],
-      "descLonga": "Bolsa de mão trançada em fio egípcio, forro interno e alça dupla. Um clássico atemporal feito ponto a ponto.\nCada peça é feita à mão, ponto por ponto, então pequenas variações de tamanho e acabamento fazem parte do charme. O fio é macio, resistente e pensado para durar.\nCuidados: lave à mão com sabão neutro e seque à sombra, longe do sol direto."
+      "descLonga": "Bolsa de mão trançada em fio egípcio, forro interno e alça dupla. Um clássico atemporal feito ponto a ponto.\nCada peça é feita à mão, ponto por ponto, então pequenas variações de tamanho e acabamento fazem parte do charme. O fio é macio, resistente e pensado para durar.\nCuidados: lave à mão com sabão neutro e seque à sombra, longe do sol direto.",
+      "esgotado": false,
+      "colecao": ""
     },
     {
       "id": "p02",
@@ -102,7 +147,9 @@
       "maisVendido": false,
       "desc": "Amigurumi macio com detalhe floral na orelha, ideal para presentear ou decorar o quarto do bebê.",
       "fotos": [],
-      "descLonga": "Amigurumi macio com detalhe floral na orelha, ideal para presentear ou decorar o quarto do bebê.\nCada peça é feita à mão, ponto por ponto, então pequenas variações de tamanho e acabamento fazem parte do charme. O fio é macio, resistente e pensado para durar.\nCuidados: lave à mão com sabão neutro e seque à sombra, longe do sol direto."
+      "descLonga": "Amigurumi macio com detalhe floral na orelha, ideal para presentear ou decorar o quarto do bebê.\nCada peça é feita à mão, ponto por ponto, então pequenas variações de tamanho e acabamento fazem parte do charme. O fio é macio, resistente e pensado para durar.\nCuidados: lave à mão com sabão neutro e seque à sombra, longe do sol direto.",
+      "esgotado": false,
+      "colecao": ""
     },
     {
       "id": "p03",
@@ -123,7 +170,9 @@
       "maisVendido": true,
       "desc": "Mimo delicado em formato de coração, perfeito para lembrancinhas.",
       "fotos": [],
-      "descLonga": "Mimo delicado em formato de coração, perfeito para lembrancinhas.\nCada peça é feita à mão, ponto por ponto, então pequenas variações de tamanho e acabamento fazem parte do charme. O fio é macio, resistente e pensado para durar.\nCuidados: lave à mão com sabão neutro e seque à sombra, longe do sol direto."
+      "descLonga": "Mimo delicado em formato de coração, perfeito para lembrancinhas.\nCada peça é feita à mão, ponto por ponto, então pequenas variações de tamanho e acabamento fazem parte do charme. O fio é macio, resistente e pensado para durar.\nCuidados: lave à mão com sabão neutro e seque à sombra, longe do sol direto.",
+      "esgotado": false,
+      "colecao": ""
     },
     {
       "id": "p04",
@@ -144,7 +193,9 @@
       "maisVendido": false,
       "desc": "Tapete artesanal em fio de malha, macio e resistente, feito sob medida para o seu cantinho.",
       "fotos": [],
-      "descLonga": "Tapete artesanal em fio de malha, macio e resistente, feito sob medida para o seu cantinho.\nCada peça é feita à mão, ponto por ponto, então pequenas variações de tamanho e acabamento fazem parte do charme. O fio é macio, resistente e pensado para durar.\nCuidados: lave à mão com sabão neutro e seque à sombra, longe do sol direto."
+      "descLonga": "Tapete artesanal em fio de malha, macio e resistente, feito sob medida para o seu cantinho.\nCada peça é feita à mão, ponto por ponto, então pequenas variações de tamanho e acabamento fazem parte do charme. O fio é macio, resistente e pensado para durar.\nCuidados: lave à mão com sabão neutro e seque à sombra, longe do sol direto.",
+      "esgotado": false,
+      "colecao": "natal"
     },
     {
       "id": "p05",
@@ -164,7 +215,9 @@
       "maisVendido": false,
       "desc": "Jogo de sousplat em ponto vazado, dá um toque acolhedor à mesa posta.",
       "fotos": [],
-      "descLonga": "Jogo de sousplat em ponto vazado, dá um toque acolhedor à mesa posta.\nCada peça é feita à mão, ponto por ponto, então pequenas variações de tamanho e acabamento fazem parte do charme. O fio é macio, resistente e pensado para durar.\nCuidados: lave à mão com sabão neutro e seque à sombra, longe do sol direto."
+      "descLonga": "Jogo de sousplat em ponto vazado, dá um toque acolhedor à mesa posta.\nCada peça é feita à mão, ponto por ponto, então pequenas variações de tamanho e acabamento fazem parte do charme. O fio é macio, resistente e pensado para durar.\nCuidados: lave à mão com sabão neutro e seque à sombra, longe do sol direto.",
+      "esgotado": false,
+      "colecao": ""
     },
     {
       "id": "p06",
@@ -183,7 +236,9 @@
       "maisVendido": false,
       "desc": "Guirlanda com florzinhas de crochê, perfeita para porta ou parede da sala.",
       "fotos": [],
-      "descLonga": "Guirlanda com florzinhas de crochê, perfeita para porta ou parede da sala.\nCada peça é feita à mão, ponto por ponto, então pequenas variações de tamanho e acabamento fazem parte do charme. O fio é macio, resistente e pensado para durar.\nCuidados: lave à mão com sabão neutro e seque à sombra, longe do sol direto."
+      "descLonga": "Guirlanda com florzinhas de crochê, perfeita para porta ou parede da sala.\nCada peça é feita à mão, ponto por ponto, então pequenas variações de tamanho e acabamento fazem parte do charme. O fio é macio, resistente e pensado para durar.\nCuidados: lave à mão com sabão neutro e seque à sombra, longe do sol direto.",
+      "esgotado": false,
+      "colecao": ""
     },
     {
       "id": "p07",
@@ -204,7 +259,9 @@
       "maisVendido": true,
       "desc": "Kit com manta mini, sapatinho e chocalho em crochê — presente perfeito para chá de bebê.",
       "fotos": [],
-      "descLonga": "Kit com manta mini, sapatinho e chocalho em crochê — presente perfeito para chá de bebê.\nCada peça é feita à mão, ponto por ponto, então pequenas variações de tamanho e acabamento fazem parte do charme. O fio é macio, resistente e pensado para durar.\nCuidados: lave à mão com sabão neutro e seque à sombra, longe do sol direto."
+      "descLonga": "Kit com manta mini, sapatinho e chocalho em crochê — presente perfeito para chá de bebê.\nCada peça é feita à mão, ponto por ponto, então pequenas variações de tamanho e acabamento fazem parte do charme. O fio é macio, resistente e pensado para durar.\nCuidados: lave à mão com sabão neutro e seque à sombra, longe do sol direto.",
+      "esgotado": false,
+      "colecao": ""
     },
     {
       "id": "p08",
@@ -223,7 +280,9 @@
       "maisVendido": false,
       "desc": "Sua bolsa exclusiva, com nome ou iniciais bordadas em fio contrastante.",
       "fotos": [],
-      "descLonga": "Sua bolsa exclusiva, com nome ou iniciais bordadas em fio contrastante.\nCada peça é feita à mão, ponto por ponto, então pequenas variações de tamanho e acabamento fazem parte do charme. O fio é macio, resistente e pensado para durar.\nCuidados: lave à mão com sabão neutro e seque à sombra, longe do sol direto."
+      "descLonga": "Sua bolsa exclusiva, com nome ou iniciais bordadas em fio contrastante.\nCada peça é feita à mão, ponto por ponto, então pequenas variações de tamanho e acabamento fazem parte do charme. O fio é macio, resistente e pensado para durar.\nCuidados: lave à mão com sabão neutro e seque à sombra, longe do sol direto.",
+      "esgotado": false,
+      "colecao": ""
     },
     {
       "id": "p09",
@@ -244,7 +303,9 @@
       "maisVendido": false,
       "desc": "Móbile suave para o berço, feito com fios atóxicos e acabamento cuidadoso.",
       "fotos": [],
-      "descLonga": "Móbile suave para o berço, feito com fios atóxicos e acabamento cuidadoso.\nCada peça é feita à mão, ponto por ponto, então pequenas variações de tamanho e acabamento fazem parte do charme. O fio é macio, resistente e pensado para durar.\nCuidados: lave à mão com sabão neutro e seque à sombra, longe do sol direto."
+      "descLonga": "Móbile suave para o berço, feito com fios atóxicos e acabamento cuidadoso.\nCada peça é feita à mão, ponto por ponto, então pequenas variações de tamanho e acabamento fazem parte do charme. O fio é macio, resistente e pensado para durar.\nCuidados: lave à mão com sabão neutro e seque à sombra, longe do sol direto.",
+      "esgotado": false,
+      "colecao": "natal"
     },
     {
       "id": "p10",
@@ -264,7 +325,9 @@
       "maisVendido": false,
       "desc": "Cestinha para guardar miudezas na penteadeira ou mesa de trabalho.",
       "fotos": [],
-      "descLonga": "Cestinha para guardar miudezas na penteadeira ou mesa de trabalho.\nCada peça é feita à mão, ponto por ponto, então pequenas variações de tamanho e acabamento fazem parte do charme. O fio é macio, resistente e pensado para durar.\nCuidados: lave à mão com sabão neutro e seque à sombra, longe do sol direto."
+      "descLonga": "Cestinha para guardar miudezas na penteadeira ou mesa de trabalho.\nCada peça é feita à mão, ponto por ponto, então pequenas variações de tamanho e acabamento fazem parte do charme. O fio é macio, resistente e pensado para durar.\nCuidados: lave à mão com sabão neutro e seque à sombra, longe do sol direto.",
+      "esgotado": false,
+      "colecao": "natal"
     }
   ]
 }
