@@ -21,6 +21,19 @@ document.addEventListener("error", e => {
   }
 }, true);
 
+
+/* enfeites da coleção de Natal (só aparecem nela) */
+const NATAL_TREE = `<svg viewBox="0 0 100 135" aria-hidden="true"><polygon points="50,6 54,17 66,18 57,26 60,38 50,31 40,38 43,26 34,18 46,17" fill="#FFD166"/><path d="M50 22 L78 58 H62 L86 92 H66 L94 124 H6 L34 92 H14 L38 58 H22 Z" fill="#1E8A5C" stroke="#0C3F2D" stroke-width="2.500" stroke-linejoin="round"/><path d="M50 22 L22 58 H38 L14 92 H34 L6 124" fill="none" stroke="#2FB57F" stroke-width="2" opacity=".55"/><rect x="43" y="124" width="14" height="11" rx="2" fill="#7A4A2B"/><circle cx="44" cy="52" r="4.500" fill="#ff5a5f"/><circle cx="60" cy="74" r="4.500" fill="#FFD166"/><circle cx="36" cy="84" r="4.500" fill="#fff3d6"/><circle cx="68" cy="108" r="4.500" fill="#ff5a5f"/><circle cx="30" cy="112" r="4.500" fill="#FFD166"/><circle cx="52" cy="98" r="4" fill="#ff5a5f"/><circle cx="52" cy="38" r="3.500" class="tw" fill="#fff3d6"/><circle cx="40" cy="66" r="3" class="tw tw2" fill="#FFD166"/><circle cx="64" cy="90" r="3" class="tw" fill="#fff3d6"/><circle cx="24" cy="100" r="3" class="tw tw2" fill="#fff3d6"/></svg>`;
+const NATAL_GIFT = (a, b) => `<svg viewBox="0 0 60 60" aria-hidden="true"><rect x="6" y="22" width="48" height="34" rx="4" fill="${a}" stroke="#0C3F2D" stroke-width="2.500"/><rect x="25" y="22" width="10" height="34" fill="${b}"/><rect x="6" y="34" width="48" height="9" fill="${b}" opacity=".9"/><path d="M30 22c-4-12-18-12-14-4 2 4 10 4 14 4zM30 22c4-12 18-12 14-4-2 4-10 4-14 4z" fill="none" stroke="${b}" stroke-width="3.500" stroke-linejoin="round"/></svg>`;
+const NATAL_BALL = (c) => `<svg viewBox="0 0 40 70" aria-hidden="true"><path d="M20 0v26" stroke="#F8D98A" stroke-width="1.500"/><rect x="15" y="24" width="10" height="7" rx="2" fill="#F8D98A"/><circle cx="20" cy="46" r="15" fill="${c}" stroke="#0C3F2D" stroke-width="2"/><path d="M9 44c4-9 11-12 18-9" fill="none" stroke="#fff" stroke-width="2.500" stroke-linecap="round" opacity=".65"/><path d="M6 48c9 6 19 6 28 0" fill="none" stroke="#F8D98A" stroke-width="2" opacity=".9"/></svg>`;
+const NATAL_CANE = `<svg viewBox="0 0 40 80" aria-hidden="true"><path d="M12 76V26a13 13 0 0 1 26 0" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round"/><path d="M12 76V26a13 13 0 0 1 26 0" fill="none" stroke="#e63946" stroke-width="10" stroke-linecap="round" stroke-dasharray="7 9"/></svg>`;
+const NATAL_DECO = `<div class="deco" aria-hidden="true">
+  <div class="ball b1">${NATAL_BALL("#e63946")}</div><div class="ball b2">${NATAL_BALL("#FFD166")}</div><div class="ball b3">${NATAL_BALL("#6fe3a1")}</div><div class="ball b4">${NATAL_BALL("#e63946")}</div><div class="ball b5">${NATAL_BALL("#fff3d6")}</div>
+  <div class="tree t1">${NATAL_TREE}</div><div class="tree t2">${NATAL_TREE}</div>
+  <div class="gift g1">${NATAL_GIFT("#e63946", "#FFD166")}</div><div class="gift g2">${NATAL_GIFT("#FFD166", "#e63946")}</div>
+  <div class="gift g3">${NATAL_GIFT("#fff3d6", "#1E8A5C")}</div><div class="gift g4">${NATAL_GIFT("#e63946", "#fff3d6")}</div>
+</div>`;
+
 function toast(msg){
   document.querySelectorAll(".toast").forEach(t => t.remove());
   const t = document.createElement("div");
@@ -43,9 +56,34 @@ function reveal(){
   }catch(e){ document.documentElement.classList.remove("js-reveal"); }
 }
 
+let TEXTOS = {};
+const T = (k, d) => (TEXTOS[k] != null && String(TEXTOS[k]).trim() !== "" ? TEXTOS[k] : d);
+// converte **negrito**, [texto](link) e quebras de linha em HTML seguro
+function fmt(t){
+  let h = esc(String(t));
+  h = h.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  h = h.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, a, u) => /^(https?:|mailto:|tel:|#|[\w./?=&%-]+$)/.test(u) ? `<a href="${u}">${a}</a>` : a);
+  return h.replace(/\n/g, "<br>");
+}
+function aplicaTextos(){
+  document.querySelectorAll("[data-t]").forEach(el => {
+    const v = TEXTOS[el.dataset.t];
+    if(v == null || String(v).trim() === "") return;
+    if(el.hasAttribute("data-m")) el.innerHTML = fmt(v); else el.textContent = v;
+  });
+  document.querySelectorAll("[data-tp]").forEach(el => { const v = TEXTOS[el.dataset.tp]; if(v) el.setAttribute("placeholder", v); });
+  const pg = document.body.dataset.page;
+  const t = pg && TEXTOS["seo." + pg + ".title"], d = pg && TEXTOS["seo." + pg + ".desc"];
+  if(t) document.title = t;
+  if(d){ const m = document.querySelector('meta[name="description"]'); if(m) m.setAttribute("content", d); }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   await carregarDados();
   const settings = getSettings();
+  TEXTOS = settings.textos || {};
+  aplicaTextos();
+  document.querySelectorAll("[data-brand-name]").forEach(el => { el.textContent = settings.brand; });
   const cats = getCategories();
   const products = getProducts();
   const colecoes = (settings.colecoes || []).filter(c => c.ativa !== false);
@@ -70,6 +108,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.querySelectorAll("[data-store-email]").forEach(el => { el.textContent = settings.email; });
   document.querySelectorAll("[data-store-cidade]").forEach(el => { el.textContent = settings.cidade; });
   document.querySelectorAll("[data-store-horario]").forEach(el => { el.textContent = settings.horario; });
+
+
+  // ---- como encomendar e perguntas frequentes (listas editáveis) ----
+  const passosEl = document.querySelector("[data-passos]");
+  if(passosEl && (settings.passos || []).length){
+    passosEl.innerHTML = settings.passos.map((s, i) => `<div class="step"><div class="num">${i + 1}</div><h4>${esc(s.titulo)}</h4><p>${esc(s.texto)}</p></div>`).join("");
+  }
+  const faqEl = document.querySelector("[data-faq]");
+  if(faqEl && (settings.faq || []).length){
+    faqEl.innerHTML = settings.faq.map((f, i) => `<details class="faq-item"${i === 0 ? " open" : ""}><summary>${esc(f.pergunta)}</summary><p>${fmt(f.resposta)}</p></details>`).join("");
+  }
 
   // ---- faixa de aviso no topo ----
   try{
@@ -112,17 +161,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ---- card de produto ----
   function productCard(p){
     const sold = !!p.esgotado;
-    const badge = sold ? '<span class="tag sold">Esgotado</span>'
-                : p.lancamento ? '<span class="tag">Lançamento</span>'
-                : p.maisVendido ? '<span class="tag alt">Mais vendido</span>'
-                : p.destaque ? '<span class="tag">Destaque</span>' : "";
-    const statusLabel = sold ? "Esgotado" : (p.status === "pronta" ? "Pronta entrega" : "Sob encomenda");
+    const badge = sold ? '<span class="tag sold">${T("app.esgotado",T("app.esgotado","Esgotado"))}</span>'
+                : p.lancamento ? '<span class="tag">${T("app.lancamento","Lançamento")}</span>'
+                : p.maisVendido ? '<span class="tag alt">${T("app.maisvendido","Mais vendido")}</span>'
+                : p.destaque ? '<span class="tag">${T("app.destaque","Destaque")}</span>' : "";
+    const statusLabel = sold ? T("app.esgotado","Esgotado") : (p.status === "pronta" ? T("app.pronta","Pronta entrega") : T("app.sobenc","Sob encomenda"));
     const varias = (p.cores || []).length > 1;
     const action = sold
-      ? `<a class="btn btn-primary btn-sm" target="_blank" rel="noopener" href="${waProduto(p)}">Avise-me</a>`
+      ? `<a class="btn btn-primary btn-sm" target="_blank" rel="noopener" href="${waProduto(p)}">${T("app.avise","Avise-me")}</a>`
       : varias
-        ? `<a class="btn btn-primary btn-sm" href="produto.html?id=${encodeURIComponent(p.id)}">Escolher cor</a>`
-        : `<button class="btn btn-primary btn-sm" type="button" data-add="${esc(p.id)}" data-cor="${esc((p.cores || [])[0] || "")}">Adicionar</button>`;
+        ? `<a class="btn btn-primary btn-sm" href="produto.html?id=${encodeURIComponent(p.id)}">${T("app.escolhercor","Escolher cor")}</a>`
+        : `<button class="btn btn-primary btn-sm" type="button" data-add="${esc(p.id)}" data-cor="${esc((p.cores || [])[0] || "")}">${T("app.adicionar","Adicionar")}</button>`;
     const fav = isFav(p.id);
     return `
     <article class="product-card ${sold ? "sold" : ""}">
@@ -135,7 +184,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <h4><a href="produto.html?id=${encodeURIComponent(p.id)}">${esc(p.nome)}</a></h4>
         <div class="price-row"><span class="price">${brl(p.preco)}</span><span class="status">${statusLabel}</span></div>
         <div class="actions">
-          <a class="btn btn-outline btn-sm view" href="produto.html?id=${encodeURIComponent(p.id)}">Ver peça</a>
+          <a class="btn btn-outline btn-sm view" href="produto.html?id=${encodeURIComponent(p.id)}">${T("app.verpeca","Ver peça")}</a>
           ${action}
         </div>
       </div>
@@ -144,7 +193,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function flash(btn, texto){
     if(!btn.dataset.label) btn.dataset.label = btn.textContent;
-    btn.textContent = texto || "Adicionado ✓";
+    btn.textContent = texto || T("app.adicionado","Adicionado ✓");
     btn.classList.add("done");
     clearTimeout(btn._t);
     btn._t = setTimeout(() => { btn.textContent = btn.dataset.label; btn.classList.remove("done"); }, 1500);
@@ -157,10 +206,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       const on = toggleFav(f.dataset.fav);
       document.querySelectorAll(`[data-fav="${CSS.escape(f.dataset.fav)}"]`).forEach(x => {
         x.setAttribute("aria-pressed", String(on));
-        if(x.dataset.favLabel != null) x.innerHTML = on ? "♥ Nos favoritos" : "♡ Favoritar";
+        if(x.dataset.favLabel != null) x.innerHTML = on ? T("app.nosfav","♥ Nos favoritos") : T("app.favoritar","♡ Favoritar");
       });
       f.classList.remove("pop"); void f.offsetWidth; f.classList.add("pop");
-      toast(on ? "Adicionado aos favoritos" : "Removido dos favoritos");
+      toast(on ? T("app.favon","Adicionado aos favoritos") : T("app.favoff","Removido dos favoritos"));
       if(document.querySelector("[data-fav-root]") && !on) renderFavs();
     }
   });
@@ -175,13 +224,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     colRoot.innerHTML = colecoes.map(c => {
       const ps = products.filter(p => p.colecao === c.id).slice(0, 4);
       if(!ps.length) return "";
-      return `<section class="colecao"><div class="container">
-        <div class="section-head"><span class="eyebrow-hand">edição especial</span><h2>${esc(c.nome)}</h2><p>${esc(c.descricao || "")}</p></div>
+      const natal = /natal/i.test(c.id + " " + c.nome);
+      return `<section class="colecao ${natal ? "natal" : ""}">${natal ? '<div class="lights" aria-hidden="true"></div><div class="snow" aria-hidden="true"></div>' + NATAL_DECO : ""}<div class="container">
+        <div class="section-head"><span class="eyebrow-hand">${natal ? "feliz natal ✦ ponto por ponto" : "edição especial"}</span><h2>${esc(c.nome)}</h2><p>${esc(c.descricao || "")}</p></div>
         <div class="product-grid">${ps.map(productCard).join("")}</div>
         <div style="text-align:center;margin-top:34px;"><a class="btn btn-outline" href="catalogo.html?colecao=${encodeURIComponent(c.id)}">Ver coleção completa</a></div>
       </div></section>`;
     }).join("");
   }
+
+  document.querySelectorAll(".colecao.natal").forEach(sec => {
+    const lights = sec.querySelector(".lights"), snow = sec.querySelector(".snow");
+    const n = Math.max(10, Math.round((sec.clientWidth || 390) / 34));
+    if(lights) lights.innerHTML = Array.from({length: n}, (_, i) => `<span style="--d:${(i * 0.37).toFixed(2)}s;--y:${i % 2 ? 9 : 0}px"></span>`).join("");
+    if(snow) snow.innerHTML = Array.from({length: 22}, (_, i) => {
+      const s = 3 + (i * 7) % 6, l = (i * 47) % 100, du = 7 + (i * 5) % 8, de = -((i * 3) % 10);
+      return `<i style="left:${l}%;width:${s}px;height:${s}px;animation-duration:${du}s;animation-delay:${de}s"></i>`;
+    }).join("");
+  });
 
   // ---- vídeo (home) ----
   const vidSec = document.querySelector("[data-video-section]");
@@ -234,7 +294,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const colsComPeca = colecoes.filter(c => products.some(p => p.colecao === c.id));
 
     function renderFilters(){
-      const chips = [{id: "todas", nome: "Todas"}, ...colsComPeca.map(c => ({id: "col:" + c.id, nome: "✨ " + c.nome})), ...cats];
+      const chips = [{id: "todas", nome: "Todas"}, ...colsComPeca.map(c => ({id: "col:" + c.id, nome: (/natal/i.test(c.id + c.nome) ? "🎄 " : "✨ ") + c.nome})), ...cats];
       filterBar.innerHTML = chips.map(c =>
         `<button class="chip ${c.id === activeCat ? "active" : ""}" type="button" data-filter="${esc(c.id)}">${esc(c.nome)}</button>`).join("");
       filterBar.querySelectorAll(".chip").forEach(btn => btn.addEventListener("click", () => {
@@ -254,7 +314,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if(count) count.textContent = list.length === 1 ? "1 peça" : `${list.length} peças`;
       catalogGrid.innerHTML = list.length
         ? list.map(productCard).join("")
-        : `<p style="grid-column:1/-1;text-align:center;color:var(--plum-soft)">Nenhuma peça encontrada. Fale com a Mi, ela pode fazer sob encomenda.</p>`;
+        : `<p style="grid-column:1/-1;text-align:center;color:var(--plum-soft)">${T("app.nenhuma","Nenhuma peça encontrada. Fale com a Mi, ela pode fazer sob encomenda.")}</p>`;
       reveal();
     }
     if(filterBar) renderFilters();
@@ -270,7 +330,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if(!ps.length){
       root.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M12 21C5 15.500 3 11.500 3 8.500A4.500 4.500 0 0 1 7.500 4C9.500 4 11 5 12 6.800 13 5 14.500 4 16.500 4A4.500 4.500 0 0 1 21 8.500c0 3-2 7-9 12.500z"/></svg>
         <h2>Nenhum favorito ainda</h2><p style="color:var(--plum-soft)">Toque no coração das peças que você amou e elas ficam guardadas aqui.</p>
-        <a class="btn btn-primary" href="catalogo.html">Ver o catálogo</a></div>`;
+        <a class="btn btn-primary" href="catalogo.html">${T("app.vercatalogo","Ver o catálogo")}</a></div>`;
       return;
     }
     const msg = `Olá, Mi! Estas são as peças que mais gostei no site ${settings.brand}:\n\n` + ps.map(p => `• ${p.nome} (${brl(p.preco)})`).join("\n") + "\n\nPode me ajudar a escolher?";
@@ -287,7 +347,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const p = products.find(x => x.id === id);
     const root = document.querySelector("[data-pdp-root]");
     if(!p){
-      root.innerHTML = `<div class="empty-state"><h2>Peça não encontrada</h2><p>Ela pode ter saído do catálogo.</p><a class="btn btn-primary" href="catalogo.html">Ver o catálogo</a></div>`;
+      root.innerHTML = `<div class="empty-state"><h2>Peça não encontrada</h2><p>Ela pode ter saído do catálogo.</p><a class="btn btn-primary" href="catalogo.html">${T("app.vercatalogo","Ver o catálogo")}</a></div>`;
     }else{
       const q = sel => document.querySelector(sel);
       const sold = !!p.esgotado;
@@ -298,10 +358,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       q("[data-pdp-nome]").textContent = p.nome;
       q("[data-pdp-preco]").textContent = brl(p.preco);
       q("[data-pdp-desc]").textContent = p.desc || "";
-      q("[data-pdp-status]").textContent = sold ? "Esgotado no momento" : (p.status === "pronta" ? "Pronta entrega" : "Sob encomenda");
+      q("[data-pdp-status]").textContent = sold ? T("app.esgotadomomento","Esgotado no momento") : (p.status === "pronta" ? T("app.pronta","Pronta entrega") : T("app.sobenc","Sob encomenda"));
       q("[data-pdp-prazo]").textContent = p.prazo || "A combinar";
       q("[data-pdp-tamanho]").textContent = p.tamanho || "A combinar";
-      q("[data-pdp-person]").textContent = p.personalizavel ? "Aceita personalização" : "Peça padrão";
+      q("[data-pdp-person]").textContent = p.personalizavel ? T("app.personaliza","Aceita personalização") : T("app.padrao","Peça padrão");
       const longo = (p.descLonga || p.desc || "").split(/\n+/).filter(Boolean);
       q("[data-pdp-long]").innerHTML = longo.map(t => `<p>${esc(t)}</p>`).join("");
 
@@ -341,7 +401,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         favBtn.dataset.fav = p.id; favBtn.dataset.favLabel = "1";
         const on = isFav(p.id);
         favBtn.setAttribute("aria-pressed", String(on));
-        favBtn.innerHTML = on ? "♥ Nos favoritos" : "♡ Favoritar";
+        favBtn.innerHTML = on ? T("app.nosfav","♥ Nos favoritos") : T("app.favoritar","♡ Favoritar");
       }
       const shareBtn = q("[data-pdp-share]");
       if(shareBtn) shareBtn.addEventListener("click", async () => {
@@ -386,7 +446,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           wa.href = waLink(settings.whatsapp, `Olá, Mi! Vi o produto ${p.nome} no site ${settings.brand} e gostaria de saber mais sobre ele.${extra}`);
         };
         atualizaWa();
-        addBtn.addEventListener("click", () => { addToCart(p.id, cor, qtd); flash(addBtn, "Adicionado ✓"); });
+        addBtn.addEventListener("click", () => { addToCart(p.id, cor, qtd); flash(addBtn, T("app.adicionado","Adicionado ✓")); });
       }
 
       const related = q("[data-pdp-related]");
@@ -415,9 +475,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const vazio = () => {
       cartRoot.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
-        <h2>Seu carrinho está vazio</h2>
-        <p style="color:var(--plum-soft)">Escolha algumas peças e elas aparecem aqui.</p>
-        <a class="btn btn-primary" href="catalogo.html">Ver o catálogo</a></div>`;
+        <h2>${T("app.cartvazio","Seu carrinho está vazio")}</h2>
+        <p style="color:var(--plum-soft)">${T("app.cartvazio2","Escolha algumas peças e elas aparecem aqui.")}</p>
+        <a class="btn btn-primary" href="catalogo.html">${T("app.vercatalogo","Ver o catálogo")}</a></div>`;
     };
     const linhas = () => readCart().map(i => ({i, p: products.find(x => x.id === i.id && !x.esgotado)})).filter(l => l.p);
 
@@ -429,7 +489,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         desconto = Math.round(desconto * 100) / 100;
       }
       const base = subtotal - desconto;
-      let frete = {valor: null, texto: "Informe o CEP para ver o frete.", cinza: true};
+      let frete = {valor: null, texto: T("app.infocep","Informe o CEP para ver o frete."), cinza: true};
       if(cepInfo){
         const local = norm(cepInfo.cidade) === norm(settings.freteCidadeLocal);
         if(local){
@@ -444,7 +504,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     function montaMensagem(ls, c){
       const itens = ls.map(({i, p}) =>
-        `• ${i.qtd}x ${p.nome}${i.cor ? ` (${i.cor})` : ""} - ${brl(p.preco * i.qtd)}${p.status === "encomenda" ? ` [sob encomenda, prazo: ${p.prazo || "a combinar"}]` : ""}`);
+        `• ${i.qtd}x ${p.nome}${i.cor ? ` (${i.cor})` : ""} - ${brl(p.preco * i.qtd)}${p.status === "encomenda" ? ` [sob encomenda, prazo: ${p.prazo || T("app.acombinar","a combinar")}]` : ""}`);
       let m = `Olá, Mi! Quero fazer este pedido pelo site ${settings.brand}:\n\n${itens.join("\n")}\n\nSubtotal: ${brl(c.subtotal)}`;
       if(cupom) m += `\nCupom ${cupom.codigo}: -${brl(c.desconto)}`;
       if(cepInfo) m += `\nEntrega: ${cepInfo.cidade}/${cepInfo.uf}${c.frete.valor !== null ? " - " + (c.frete.valor === 0 ? "frete grátis" : brl(c.frete.valor)) : " (frete a combinar)"}`;
@@ -459,20 +519,20 @@ document.addEventListener("DOMContentLoaded", async () => {
       cartRoot.innerHTML = `
         <div class="cart-items" data-items></div>
         <aside class="cart-summary" aria-label="Resumo do pedido">
-          <h2 style="font-size:1.4rem;margin:0">Resumo</h2>
+          <h2 style="font-size:1.4rem;margin:0">${T("app.resumo","Resumo")}</h2>
           <div data-totals></div>
-          <p class="note" data-sum-enc hidden>Peças sob encomenda têm prazo de produção, informado em cada uma.</p>
-          ${cuponsAtivos.length ? `<div class="box"><h3>Cupom de desconto</h3>
-            <div class="inline-form"><input type="text" id="cupom-in" placeholder="Digite o código" autocapitalize="characters" autocomplete="off" aria-label="Código do cupom"><button class="btn btn-outline btn-sm" type="button" data-cupom>Aplicar</button></div>
+          <p class="note" data-sum-enc hidden>${T("app.avisoenc","Peças sob encomenda têm prazo de produção, informado em cada uma.")}</p>
+          ${cuponsAtivos.length ? `<div class="box"><h3>${T("app.cupomtit","Cupom de desconto")}</h3>
+            <div class="inline-form"><input type="text" id="cupom-in" placeholder="${esc(T("app.cupomph","Digite o código"))}" autocapitalize="characters" autocomplete="off" aria-label="Código do cupom"><button class="btn btn-outline btn-sm" type="button" data-cupom>${T("app.aplicar","Aplicar")}</button></div>
             <p class="msg" data-cupom-msg></p></div>` : ""}
-          <div class="box"><h3>Entrega</h3>
-            <div class="inline-form"><input type="text" id="cep-in" inputmode="numeric" maxlength="9" placeholder="Seu CEP" autocomplete="postal-code" aria-label="CEP"><button class="btn btn-outline btn-sm" type="button" data-cep>Calcular</button></div>
+          <div class="box"><h3>${T("app.entrega","Entrega")}</h3>
+            <div class="inline-form"><input type="text" id="cep-in" inputmode="numeric" maxlength="9" placeholder="${esc(T("app.cepph","Seu CEP"))}" autocomplete="postal-code" aria-label="CEP"><button class="btn btn-outline btn-sm" type="button" data-cep>${T("app.calcular","Calcular")}</button></div>
             <p class="msg" data-cep-msg></p></div>
-          <div class="field"><label for="cli-nome">Seu nome (opcional)</label><input type="text" id="cli-nome" autocomplete="name"></div>
-          <div class="field"><label for="cli-obs">Observações (opcional)</label><textarea id="cli-obs" rows="3" placeholder="Cor, data desejada, endereço de entrega..."></textarea></div>
-          <a class="btn btn-whats" data-sum-wa target="_blank" rel="noopener">Enviar pedido pelo WhatsApp</a>
+          <div class="field"><label for="cli-nome">${T("app.seunome","Seu nome (opcional)")}</label><input type="text" id="cli-nome" autocomplete="name"></div>
+          <div class="field"><label for="cli-obs">${T("app.obs","Observações (opcional)")}</label><textarea id="cli-obs" rows="3" placeholder="${esc(T("app.obsph","Cor, data desejada, endereço de entrega..."))}"></textarea></div>
+          <a class="btn btn-whats" data-sum-wa target="_blank" rel="noopener">${T("app.enviarpedido","Enviar pedido pelo WhatsApp")}</a>
           <p class="note">${esc(settings.avisoPedido || "Frete, prazo e forma de pagamento são combinados pelo WhatsApp.")}</p>
-          <button class="link-btn" type="button" data-clear>Esvaziar carrinho</button>
+          <button class="link-btn" type="button" data-clear>${T("app.esvaziar","Esvaziar carrinho")}</button>
         </aside>`;
       desenha();
     }
@@ -488,7 +548,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           <a class="ph" href="produto.html?id=${encodeURIComponent(p.id)}">${thumbHTML(p)}</a>
           <div class="info">
             <a class="nm" href="produto.html?id=${encodeURIComponent(p.id)}">${esc(p.nome)}</a>
-            <span class="sub">${i.cor ? esc(i.cor) + " · " : ""}${brl(p.preco)} cada · ${p.status === "pronta" ? "Pronta entrega" : "Sob encomenda"}</span>
+            <span class="sub">${i.cor ? esc(i.cor) + " · " : ""}${brl(p.preco)} cada · ${p.status === "pronta" ? T("app.pronta","Pronta entrega") : T("app.sobenc","Sob encomenda")}</span>
             <div class="row2">
               <div class="stepper" role="group" aria-label="Quantidade de ${esc(p.nome)}">
                 <button type="button" data-q="-1" data-key="${key}" aria-label="Diminuir">−</button>
@@ -497,7 +557,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               </div>
               <span class="line-total">${brl(sub)}</span>
             </div>
-            <button class="link-btn" type="button" data-remove="${key}" style="align-self:flex-start">Remover</button>
+            <button class="link-btn" type="button" data-remove="${key}" style="align-self:flex-start">${T("app.remover","Remover")}</button>
           </div>
         </div>`;
       }).join("");
@@ -505,7 +565,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       cartRoot.querySelector("[data-totals]").innerHTML = `
         <div class="sum-line"><span>${qtd === 1 ? "1 peça" : qtd + " peças"}</span><span>${brl(c.subtotal)}</span></div>
         ${cupom ? `<div class="sum-line off"><span>Cupom ${esc(cupom.codigo)}</span><span>-${brl(c.desconto)}</span></div>` : ""}
-        <div class="sum-line"><span>Frete</span><span>${c.frete.valor === null ? "a combinar" : (c.frete.valor === 0 ? "grátis" : brl(c.frete.valor))}</span></div>
+        <div class="sum-line"><span>${T("app.frete","Frete")}</span><span>${c.frete.valor === null ? T("app.acombinar","a combinar") : (c.frete.valor === 0 ? T("app.gratis","grátis") : brl(c.frete.valor))}</span></div>
         <div class="sum-row" style="margin-top:8px"><span>Total${c.frete.valor === null ? " (sem frete)" : ""}</span><span class="total">${brl(c.total)}</span></div>`;
       cartRoot.querySelector("[data-sum-enc]").hidden = !enc;
       cartRoot.querySelector("[data-sum-wa]").href = waLink(settings.whatsapp, montaMensagem(ls, c));
@@ -529,13 +589,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         const cod = norm(cartRoot.querySelector("#cupom-in").value).replace(/\s/g, "");
         const ok = cuponsAtivos.find(c => norm(c.codigo).replace(/\s/g, "") === cod);
         if(ok){ cupom = ok; msg.className = "msg ok"; msg.textContent = `Cupom ${ok.codigo} aplicado.`; }
-        else{ cupom = null; msg.className = "msg err"; msg.textContent = cod ? "Cupom não encontrado ou expirado." : "Digite o código do cupom."; }
+        else{ cupom = null; msg.className = "msg err"; msg.textContent = cod ? T("app.cupomerr","Cupom não encontrado ou expirado.") : T("app.cupomvazio","Digite o código do cupom."); }
         desenha(); return;
       }
       if(e.target.closest("[data-cep]")){
         const msg = cartRoot.querySelector("[data-cep-msg]");
         const cep = cartRoot.querySelector("#cep-in").value.replace(/\D/g, "");
-        if(cep.length !== 8){ msg.className = "msg err"; msg.textContent = "Digite um CEP com 8 números."; return; }
+        if(cep.length !== 8){ msg.className = "msg err"; msg.textContent = T("app.cepinv","Digite um CEP com 8 números."); return; }
         msg.className = "msg"; msg.textContent = "Buscando...";
         try{
           const r = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
@@ -543,7 +603,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           if(d.erro) throw new Error("cep");
           cepInfo = {cidade: d.localidade, uf: d.uf};
           desenha();
-        }catch(err){ cepInfo = null; msg.className = "msg err"; msg.textContent = "Não consegui achar esse CEP. A Mi combina o frete com você pelo WhatsApp."; desenha(); }
+        }catch(err){ cepInfo = null; msg.className = "msg err"; msg.textContent = T("app.cepnao","Não consegui achar esse CEP. A Mi combina o frete com você pelo WhatsApp."); desenha(); }
         return;
       }
     });

@@ -30,6 +30,55 @@ let STORE_SETTINGS_DEFAULT = {
   colecoes: [
     { id: "natal", nome: "Coleção de Natal", descricao: "Presentes e decoração feitos à mão para a época mais bonita do ano.", ativa: true }
   ],
+  textos: {},
+  passos: [
+    {
+      "titulo": "Escolha",
+      "texto": "Navegue pelo catálogo ou peça algo do seu jeito."
+    },
+    {
+      "titulo": "Contato",
+      "texto": "Fale com a Mi pelo WhatsApp."
+    },
+    {
+      "titulo": "Combine",
+      "texto": "Alinhe cor, tamanho e prazo."
+    },
+    {
+      "titulo": "Produção",
+      "texto": "Sua peça é feita à mão com cuidado."
+    },
+    {
+      "titulo": "Receba",
+      "texto": "Combine a entrega e aproveite!"
+    }
+  ],
+  faq: [
+    {
+      "pergunta": "Faz encomenda personalizada?",
+      "resposta": "Sim! A maioria das peças pode ser personalizada em cor, tamanho e detalhes. É só falar com a Mi."
+    },
+    {
+      "pergunta": "Qual o prazo de produção?",
+      "resposta": "Varia conforme a peça, entre 2 e 15 dias úteis. O prazo exato aparece na página de cada produto."
+    },
+    {
+      "pergunta": "Entrega para outras cidades?",
+      "resposta": "Sim, envio para todo o Brasil via transportadora ou Correios."
+    },
+    {
+      "pergunta": "Quais formas de pagamento?",
+      "resposta": "O pagamento é combinado direto com a Mi pelo WhatsApp, na hora de fechar o pedido."
+    },
+    {
+      "pergunta": "Posso escolher a cor?",
+      "resposta": "Sim, a maioria das peças tem opções de cor — combine direto com a Mi."
+    },
+    {
+      "pergunta": "Como faço para pedir orçamento?",
+      "resposta": "Preencha o formulário de [encomenda personalizada](encomenda.html) ou chame no WhatsApp."
+    }
+  ],
   depoimentos: [
     { nome: "Ana Paula", texto: "A bolsa ficou ainda mais linda do que eu imaginei, e o cuidado no acabamento é impressionante.", estrelas: 5 },
     { nome: "Rafaela", texto: "Encomendei um amigurumi para o aniversário da minha filha, chegou no prazo e com muito carinho.", estrelas: 5 },
